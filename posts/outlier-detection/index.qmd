@@ -14,5 +14,14 @@ import numpy as np
 import pandas as pd
 from sklearn.linear_model import LinearRegression
 
+data_root = 'https://raw.githubusercontent.com/erica16/ml1_blogs/main/data/historical_emissions.csv'
+emissions_fi = pd.read_csv(data_root)
 
+X = emissions_fi[["Country"]].values[:15]
+y = emissions_fi[["2018"]].values[:15]
+
+# Visualize the data
+emissions_fi.plot.scatter(X, y)
+#plt.axis([23_500, 62_500, 4, 9])
+plt.show()
 ```
