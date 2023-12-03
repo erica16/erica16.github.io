@@ -1,0 +1,78 @@
+---
+title: "Quarto Basics"
+format:
+  html:
+    code-fold: true
+jupyter: python3
+editor:
+  render-on-save: true
+---
+
+
+```{python}
+import matplotlib.pyplot as plt
+import numpy as np
+import pandas as pd
+import seaborn as sns
+from sklearn.linear_model import LinearRegression
+from sklearn.model_selection import train_test_split
+from sklearn.impute import SimpleImputer
+from sklearn.metrics import r2_score
+from sklearn.cluster import KMeans
+```
+
+```{python}
+iris_csv = 'https://raw.githubusercontent.com/erica16/ml1_blogs/main/data/IRIS.csv'
+
+iris_df = pd.read_csv(iris_csv)
+
+sns.scatterplot(data=iris_df, x='sepal_width', y='petal_width', s=12, hue='species')
+plt.show()
+
+sns.scatterplot(data=iris_df, x='sepal_length', y='petal_length', s=12, hue='species')
+plt.show()
+
+sns.scatterplot(data=iris_df, x='sepal_length', y='petal_width', s=12, hue='species')
+plt.show()
+
+sns.scatterplot(data=iris_df, x='sepal_width', y='petal_length', s=12, hue='species')
+plt.show()
+
+length_np = np.array(iris_df[['sepal_length', 'petal_length']])
+width_np = np.array(iris_df[['sepal_width', 'petal_width']])
+
+```
+
+
+```{python}
+# k-means clusterer
+k = 3
+kmeans = KMeans(n_clusters=k, random_state=42)
+y_pred = kmeans.fit_predict(length_np)
+
+# plot decision boundaries
+mins = length_np.min(axis=0) - 0.1
+maxs = length_np.max(axis=0) + 0.1
+xx, yy = np.meshgrid(np.linspace(mins[0], maxs[0], 1000),
+                      np.linspace(mins[1], maxs[1], 1000))
+Z = kmeans.predict(np.c_[xx.ravel(), yy.ravel()])
+Z = Z.reshape(xx.shape)
+
+plt.contourf(Z, extent=(mins[0], maxs[0], mins[1], maxs[1]),
+            cmap="Pastel2")
+plt.contour(Z, extent=(mins[0], maxs[0], mins[1], maxs[1]),
+            linewidths=1, colors='k')
+
+# plot data
+sns.scatterplot(data=iris_df, x='sepal_length', y='petal_length', s=12, hue='species')
+
+# plot centroids
+centroids = kmeans.cluster_centers_
+plt.scatter(centroids[:, 0], centroids[:, 1],
+                marker='o', s=35, linewidths=8,
+                color='white', zorder=10, alpha=0.9)
+plt.scatter(centroids[:, 0], centroids[:, 1],
+                marker='x', s=2, linewidths=12,
+                color='black', zorder=11, alpha=1)
+```
+```
