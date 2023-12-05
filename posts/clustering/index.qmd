@@ -1,5 +1,5 @@
 ---
-title: "Quarto Basics"
+title: "Clustering"
 format:
   html:
     code-fold: true
@@ -7,7 +7,7 @@ jupyter: python3
 editor:
   render-on-save: true
 ---
-
+data set source: https://www.kaggle.com/datasets/arshid/iris-flower-dataset
 
 ```{python}
 import matplotlib.pyplot as plt

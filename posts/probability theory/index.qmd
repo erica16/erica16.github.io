@@ -1,5 +1,5 @@
 ---
-title: "Quarto Basics"
+title: "Probability Theory and Random Variables"
 format:
   html:
     code-fold: true
@@ -69,55 +69,10 @@ all_df = happy_renew_df.merge(percent_renew_years, on='Entity')
 
 all_xy = all_df.filter(['Happiness Score', 'Percent Renewable Energy', 'Solar', 'Wind', 'Hydro', 'Other', 'Largest Renewable Source'])
 
-# prepare data for training
-# train_set, test_set = train_test_split(all_xy, test_size=0.2, random_state=42)
-
-# X_train = np.array(train_set['Happiness Score']).reshape((-1, 1))
-# y_train = np.array(train_set['Percent Renewable Energy'])
-
-# X_test = np.array(test_set['Happiness Score']).reshape((-1, 1))
-
-```
-
-```{python}
-
-
-# plot data
-X =  np.array(all_xy[['Percent Renewable Energy', 'Happiness Score']])
-
 sns.scatterplot(data=all_xy, x='Percent Renewable Energy', y='Happiness Score', s=12, hue='Largest Renewable Source')
 plt.show()
 
-# k-means clusterer
-k = 5
-kmeans = KMeans(n_clusters=k, random_state=42)
-y_pred = kmeans.fit_predict(X)
 
-# plot decision boundaries
-mins = X.min(axis=0) - 0.1
-maxs = X.max(axis=0) + 0.1
-xx, yy = np.meshgrid(np.linspace(mins[0], maxs[0], 1000),
-                      np.linspace(mins[1], maxs[1], 1000))
-Z = kmeans.predict(np.c_[xx.ravel(), yy.ravel()])
-Z = Z.reshape(xx.shape)
-
-plt.contourf(Z, extent=(mins[0], maxs[0], mins[1], maxs[1]),
-            cmap="Pastel2")
-plt.contour(Z, extent=(mins[0], maxs[0], mins[1], maxs[1]),
-            linewidths=1, colors='k')
-
-# plot data
-# plt.plot(X_test[:, 0], X_test[:, 1], 'k.', markersize=2)
-sns.scatterplot(data=all_xy, x='Percent Renewable Energy', y='Happiness Score', s=12, hue='Largest Renewable Source')
-
-# plot centroids
-centroids = kmeans.cluster_centers_
-plt.scatter(centroids[:, 0], centroids[:, 1],
-                marker='o', s=35, linewidths=8,
-                color='white', zorder=10, alpha=0.9)
-plt.scatter(centroids[:, 0], centroids[:, 1],
-                marker='x', s=2, linewidths=12,
-                color='black', zorder=11, alpha=1)
 ```
 
 ```{python}

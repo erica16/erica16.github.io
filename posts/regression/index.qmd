@@ -1,7 +1,0 @@
-```{python}
-# linear regression
-lin_reg = LinearRegression()
-lin_reg.fit(X_train, y_train)
-lin_reg.intercept_, lin_reg.coef_
-y_pred = lin_reg.predict(X_test)
-```

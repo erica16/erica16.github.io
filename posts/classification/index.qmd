@@ -1,0 +1,55 @@
+---
+title: "Random Forest Classifier"
+format:
+  html:
+    code-fold: true
+jupyter: python3
+editor:
+  render-on-save: true
+---
+
+```{python}
+import matplotlib.pyplot as plt
+import numpy as np
+import pandas as pd
+import seaborn as sns
+from sklearn.preprocessing import OneHotEncoder, StandardScaler, LabelEncoder, OrdinalEncoder
+from sklearn.compose import ColumnTransformer, make_column_selector, make_column_transformer
+from sklearn.ensemble import RandomForestClassifier
+from sklearn.metrics import accuracy_score
+
+# get data
+student_df = pd.read_csv('https://raw.githubusercontent.com/erica16/ml1_blogs/main/data/student.csv')
+
+#dropping ID because it will not be used to train or be predicted
+student_df_clean = student_df.drop(student_df.columns[:2], axis='columns')
+cat_selector = make_column_selector(dtype_include=object)
+cat_columns = cat_selector(student_df_clean)
+print(cat_columns)
+label_encoder = LabelEncoder()
+
+student_df_enc = student_df_clean.select_dtypes(include=['number'])
+
+# Iterate through columns and encode categorical columns
+for col in student_df_clean.columns:
+    if student_df_clean[col].dtype == 'object':  # Check if column has categorical data
+        student_df_enc[col] = label_encoder.fit_transform(student_df_clean[col])
+
+train_set_X, test_set_X, train_set_y, test_set_y = train_test_split(student_df_enc.drop('Grade', axis='columns'), student_df_enc['Grade'], test_size=0.2, random_state=42)
+
+rnd_clf = RandomForestClassifier(n_estimators=500, max_leaf_nodes=16,
+                                 n_jobs=-1, random_state=42)
+rnd_clf.fit(train_set_X, train_set_y)
+
+y_pred_rf = rnd_clf.predict(test_set_X)
+
+# take a look at feature importances to see what to use as the independent value
+
+feature_importances = pd.Series(rnd_clf.feature_importances_, train_set_X.columns).sort_values()
+
+plt.barh(feature_importances.index, feature_importances.values)
+plt.show()
+
+print(accuracy_score(test_set_y, y_pred_rf))
+```
+
