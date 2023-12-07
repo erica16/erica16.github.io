@@ -1,0 +1,674 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en"><head>
+
+<meta charset="utf-8">
+<meta name="generator" content="quarto-1.3.450">
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+
+
+<title>Erica’s ML Blog - Clustering</title>
+<style>
+code{white-space: pre-wrap;}
+span.smallcaps{font-variant: small-caps;}
+div.columns{display: flex; gap: min(4vw, 1.5em);}
+div.column{flex: auto; overflow-x: auto;}
+div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+ul.task-list{list-style: none;}
+ul.task-list li input[type="checkbox"] {
+  width: 0.8em;
+  margin: 0 0.8em 0.2em -1em; /* quarto-specific, see https://github.com/quarto-dev/quarto-cli/issues/4556 */ 
+  vertical-align: middle;
+}
+/* CSS for syntax highlighting */
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+div.sourceCode { margin: 1em 0; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+  { counter-reset: source-line 0; }
+pre.numberSource code > span
+  { position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+  { content: counter(source-line);
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; display: inline-block;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+  }
+pre.numberSource { margin-left: 3em;  padding-left: 4px; }
+div.sourceCode
+  {   }
+@media screen {
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+}
+</style>
+
+
+<script src="../../site_libs/quarto-nav/quarto-nav.js"></script>
+<script src="../../site_libs/quarto-nav/headroom.min.js"></script>
+<script src="../../site_libs/clipboard/clipboard.min.js"></script>
+<script src="../../site_libs/quarto-search/autocomplete.umd.js"></script>
+<script src="../../site_libs/quarto-search/fuse.min.js"></script>
+<script src="../../site_libs/quarto-search/quarto-search.js"></script>
+<meta name="quarto:offset" content="../../">
+<script src="../../site_libs/quarto-html/quarto.js"></script>
+<script src="../../site_libs/quarto-html/popper.min.js"></script>
+<script src="../../site_libs/quarto-html/tippy.umd.min.js"></script>
+<script src="../../site_libs/quarto-html/anchor.min.js"></script>
+<link href="../../site_libs/quarto-html/tippy.css" rel="stylesheet">
+<link href="../../site_libs/quarto-html/quarto-syntax-highlighting.css" rel="stylesheet" id="quarto-text-highlighting-styles">
+<script src="../../site_libs/bootstrap/bootstrap.min.js"></script>
+<link href="../../site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
+<link href="../../site_libs/bootstrap/bootstrap.min.css" rel="stylesheet" id="quarto-bootstrap" data-mode="light">
+<script id="quarto-search-options" type="application/json">{
+  "location": "navbar",
+  "copy-button": false,
+  "collapse-after": 3,
+  "panel-placement": "end",
+  "type": "overlay",
+  "limit": 20,
+  "language": {
+    "search-no-results-text": "No results",
+    "search-matching-documents-text": "matching documents",
+    "search-copy-link-title": "Copy link to search",
+    "search-hide-matches-text": "Hide additional matches",
+    "search-more-match-text": "more match in this document",
+    "search-more-matches-text": "more matches in this document",
+    "search-clear-button-title": "Clear",
+    "search-detached-cancel-button-title": "Cancel",
+    "search-submit-button-title": "Submit",
+    "search-label": "Search"
+  }
+}</script>
+
+
+<link rel="stylesheet" href="../../styles.css">
+</head>
+
+<body class="nav-fixed fullcontent">
+
+<div id="quarto-search-results"></div>
+  <header id="quarto-header" class="headroom fixed-top">
+    <nav class="navbar navbar-expand-lg navbar-dark ">
+      <div class="navbar-container container-fluid">
+      <div class="navbar-brand-container">
+    <a class="navbar-brand" href="../../index.html">
+    <span class="navbar-title">Erica’s ML Blog</span>
+    </a>
+  </div>
+            <div id="quarto-search" class="" title="Search"></div>
+          <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarCollapse" aria-controls="navbarCollapse" aria-expanded="false" aria-label="Toggle navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
+  <span class="navbar-toggler-icon"></span>
+</button>
+          <div class="collapse navbar-collapse" id="navbarCollapse">
+            <ul class="navbar-nav navbar-nav-scroll ms-auto">
+  <li class="nav-item">
+    <a class="nav-link" href="../../about.html" rel="" target="">
+ <span class="menu-text">About</span></a>
+  </li>  
+  <li class="nav-item compact">
+    <a class="nav-link" href="https://github.com/" rel="" target=""><i class="bi bi-github" role="img">
+</i> 
+ <span class="menu-text"></span></a>
+  </li>  
+  <li class="nav-item compact">
+    <a class="nav-link" href="https://twitter.com" rel="" target=""><i class="bi bi-twitter" role="img">
+</i> 
+ <span class="menu-text"></span></a>
+  </li>  
+</ul>
+            <div class="quarto-navbar-tools">
+</div>
+          </div> <!-- /navcollapse -->
+      </div> <!-- /container-fluid -->
+    </nav>
+</header>
+<!-- content -->
+<header id="title-block-header" class="quarto-title-block default page-columns page-full">
+  <div class="quarto-title-banner page-columns page-full">
+    <div class="quarto-title column-body">
+      <h1 class="title">Clustering</h1>
+                      </div>
+  </div>
+    
+  
+  <div class="quarto-title-meta">
+
+      
+    
+      
+    </div>
+    
+  
+  </header><div id="quarto-content" class="quarto-container page-columns page-rows-contents page-layout-article page-navbar">
+<!-- sidebar -->
+<!-- margin-sidebar -->
+    
+<!-- main -->
+<main class="content quarto-banner-title-block" id="quarto-document-content">
+
+
+
+
+<section id="clustering" class="level1">
+<h1>Clustering</h1>
+<p>As an avid coffee drinker, I have always been impressed by people who can give a cup of black coffee a good sniff and tell you exactly where it was grown or the bean variety. I want to know if a machine learning algorithm could “smell out” coffee bean variety based on several factors. Data set source: https://www.kaggle.com/datasets/fatihb/coffee-quality-data-cqi</p>
+<section id="step-1-import-libraries-and-coffee-dataset" class="level2">
+<h2 class="anchored" data-anchor-id="step-1-import-libraries-and-coffee-dataset">Step 1: Import libraries and coffee dataset</h2>
+<div class="cell" data-execution_count="1">
+<details>
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb1"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> matplotlib.pyplot <span class="im">as</span> plt</span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> numpy <span class="im">as</span> np</span>
+<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> pandas <span class="im">as</span> pd</span>
+<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> seaborn <span class="im">as</span> sns</span>
+<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> sklearn.model_selection <span class="im">import</span> train_test_split</span>
+<span id="cb1-6"><a href="#cb1-6" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> sklearn.impute <span class="im">import</span> SimpleImputer</span>
+<span id="cb1-7"><a href="#cb1-7" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> sklearn.metrics <span class="im">import</span> r2_score</span>
+<span id="cb1-8"><a href="#cb1-8" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> sklearn.cluster <span class="im">import</span> KMeans</span>
+<span id="cb1-9"><a href="#cb1-9" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> sklearn.preprocessing <span class="im">import</span> LabelEncoder</span>
+<span id="cb1-10"><a href="#cb1-10" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> sklearn.ensemble <span class="im">import</span> RandomForestClassifier</span>
+<span id="cb1-11"><a href="#cb1-11" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> re</span>
+<span id="cb1-12"><a href="#cb1-12" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-13"><a href="#cb1-13" aria-hidden="true" tabindex="-1"></a>coffee_csv <span class="op">=</span> <span class="st">'https://raw.githubusercontent.com/erica16/ml1_blogs/main/data/df_arabica_clean.csv'</span></span>
+<span id="cb1-14"><a href="#cb1-14" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-15"><a href="#cb1-15" aria-hidden="true" tabindex="-1"></a>coffee_df <span class="op">=</span> pd.read_csv(coffee_csv)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+</div>
+</section>
+<section id="step-2-get-familiar-with-the-data" class="level2">
+<h2 class="anchored" data-anchor-id="step-2-get-familiar-with-the-data">Step 2: Get familiar with the data</h2>
+<p>Before I do anything I need to know what type of data I’m dealing with here.</p>
+<div class="cell" data-execution_count="2">
+<details>
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb2"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a>coffee_df.info()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+<div class="cell-output cell-output-stdout">
+<pre><code>&lt;class 'pandas.core.frame.DataFrame'&gt;
+RangeIndex: 207 entries, 0 to 206
+Data columns (total 41 columns):
+ #   Column                 Non-Null Count  Dtype  
+---  ------                 --------------  -----  
+ 0   Unnamed: 0             207 non-null    int64  
+ 1   ID                     207 non-null    int64  
+ 2   Country of Origin      207 non-null    object 
+ 3   Farm Name              205 non-null    object 
+ 4   Lot Number             206 non-null    object 
+ 5   Mill                   204 non-null    object 
+ 6   ICO Number             75 non-null     object 
+ 7   Company                207 non-null    object 
+ 8   Altitude               206 non-null    object 
+ 9   Region                 205 non-null    object 
+ 10  Producer               206 non-null    object 
+ 11  Number of Bags         207 non-null    int64  
+ 12  Bag Weight             207 non-null    object 
+ 13  In-Country Partner     207 non-null    object 
+ 14  Harvest Year           207 non-null    object 
+ 15  Grading Date           207 non-null    object 
+ 16  Owner                  207 non-null    object 
+ 17  Variety                201 non-null    object 
+ 18  Status                 207 non-null    object 
+ 19  Processing Method      202 non-null    object 
+ 20  Aroma                  207 non-null    float64
+ 21  Flavor                 207 non-null    float64
+ 22  Aftertaste             207 non-null    float64
+ 23  Acidity                207 non-null    float64
+ 24  Body                   207 non-null    float64
+ 25  Balance                207 non-null    float64
+ 26  Uniformity             207 non-null    float64
+ 27  Clean Cup              207 non-null    float64
+ 28  Sweetness              207 non-null    float64
+ 29  Overall                207 non-null    float64
+ 30  Defects                207 non-null    float64
+ 31  Total Cup Points       207 non-null    float64
+ 32  Moisture Percentage    207 non-null    float64
+ 33  Category One Defects   207 non-null    int64  
+ 34  Quakers                207 non-null    int64  
+ 35  Color                  207 non-null    object 
+ 36  Category Two Defects   207 non-null    int64  
+ 37  Expiration             207 non-null    object 
+ 38  Certification Body     207 non-null    object 
+ 39  Certification Address  207 non-null    object 
+ 40  Certification Contact  207 non-null    object 
+dtypes: float64(13), int64(6), object(22)
+memory usage: 66.4+ KB</code></pre>
+</div>
+</div>
+</section>
+<section id="step-3-clean-data" class="level2">
+<h2 class="anchored" data-anchor-id="step-3-clean-data">Step 3: Clean data</h2>
+<p>A lot of these columns are not related to the coffee bean itself, so I’ll want to remove those. It also appears that I will need to handle null values, even after I take out the ICO number. I’ll go ahead and pare the dataset down to just the columns that are related to the coffee beans, but before I can remove null values I need to get the Altitude values from a string type to an int type so that I can use them more accurately. I wrote a function that uses regex to pull out the int values from the Altitude string into an array of stringified ints, which I turn into ints and then average so I only have one value for each Altitude. After that, I need the categorical columns to be useable by the machine learning algorithms, so I use a label encoder to turn the categorical data into numerical data. This dataset also isn’t very big, so I use an imputer to change null values to plausible values instead of dropping rows with null values.</p>
+<div class="cell" data-execution_count="3">
+<details>
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb4"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a><span class="co"># clean data</span></span>
+<span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a>coffee_df_small <span class="op">=</span> coffee_df[[<span class="st">'Country of Origin'</span>, <span class="st">'Altitude'</span>, <span class="st">'Region'</span>, <span class="st">'Variety'</span>, <span class="st">'Processing Method'</span>, <span class="st">'Aroma'</span>, <span class="st">'Flavor'</span>]].copy()</span>
+<span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-4"><a href="#cb4-4" aria-hidden="true" tabindex="-1"></a><span class="co"># altitude has some values that are ranges, which is not ideal because it makes it a string not an int, so we'll take the average and replace the value with that</span></span>
+<span id="cb4-5"><a href="#cb4-5" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> get_altitude_int(alt_in):</span>
+<span id="cb4-6"><a href="#cb4-6" aria-hidden="true" tabindex="-1"></a>  ints <span class="op">=</span> re.findall(<span class="vs">r'\b\d+\b'</span>, alt_in)</span>
+<span id="cb4-7"><a href="#cb4-7" aria-hidden="true" tabindex="-1"></a>  int_values <span class="op">=</span> [<span class="bu">int</span>(num) <span class="cf">for</span> num <span class="kw">in</span> ints]</span>
+<span id="cb4-8"><a href="#cb4-8" aria-hidden="true" tabindex="-1"></a>  <span class="cf">return</span> <span class="bu">int</span>(np.mean(int_values))</span>
+<span id="cb4-9"><a href="#cb4-9" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-10"><a href="#cb4-10" aria-hidden="true" tabindex="-1"></a>altitude_no_na <span class="op">=</span> coffee_df_small[<span class="st">'Altitude'</span>].notnull()</span>
+<span id="cb4-11"><a href="#cb4-11" aria-hidden="true" tabindex="-1"></a>coffee_df_small.loc[altitude_no_na, <span class="st">'Altitude Avg'</span>] <span class="op">=</span> coffee_df_small.loc[altitude_no_na, <span class="st">'Altitude'</span>].<span class="bu">apply</span>(get_altitude_int)</span>
+<span id="cb4-12"><a href="#cb4-12" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-13"><a href="#cb4-13" aria-hidden="true" tabindex="-1"></a><span class="co"># turn categorical columns into numerical</span></span>
+<span id="cb4-14"><a href="#cb4-14" aria-hidden="true" tabindex="-1"></a>coffee_df_nums <span class="op">=</span> coffee_df_small.select_dtypes(include<span class="op">=</span>[<span class="st">'number'</span>])</span>
+<span id="cb4-15"><a href="#cb4-15" aria-hidden="true" tabindex="-1"></a>label_encoder <span class="op">=</span> LabelEncoder()</span>
+<span id="cb4-16"><a href="#cb4-16" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-17"><a href="#cb4-17" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span> col <span class="kw">in</span> coffee_df_small.columns:</span>
+<span id="cb4-18"><a href="#cb4-18" aria-hidden="true" tabindex="-1"></a>    <span class="cf">if</span> coffee_df_small[col].dtype <span class="op">==</span> <span class="st">'object'</span>:  <span class="co"># Check if column has categorical data</span></span>
+<span id="cb4-19"><a href="#cb4-19" aria-hidden="true" tabindex="-1"></a>        coffee_df_nums[col] <span class="op">=</span> label_encoder.fit_transform(coffee_df_small[col])</span>
+<span id="cb4-20"><a href="#cb4-20" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-21"><a href="#cb4-21" aria-hidden="true" tabindex="-1"></a>imputer <span class="op">=</span> SimpleImputer(strategy<span class="op">=</span><span class="st">"median"</span>)</span>
+<span id="cb4-22"><a href="#cb4-22" aria-hidden="true" tabindex="-1"></a>imputer.fit(coffee_df_nums)</span>
+<span id="cb4-23"><a href="#cb4-23" aria-hidden="true" tabindex="-1"></a>coffee_imp <span class="op">=</span> pd.DataFrame(imputer.transform(coffee_df_nums), columns<span class="op">=</span>coffee_df_nums.columns)</span>
+<span id="cb4-24"><a href="#cb4-24" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(coffee_imp.info())</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+<div class="cell-output cell-output-stdout">
+<pre><code>&lt;class 'pandas.core.frame.DataFrame'&gt;
+RangeIndex: 207 entries, 0 to 206
+Data columns (total 8 columns):
+ #   Column             Non-Null Count  Dtype  
+---  ------             --------------  -----  
+ 0   Aroma              207 non-null    float64
+ 1   Flavor             207 non-null    float64
+ 2   Altitude Avg       207 non-null    float64
+ 3   Country of Origin  207 non-null    float64
+ 4   Altitude           207 non-null    float64
+ 5   Region             207 non-null    float64
+ 6   Variety            207 non-null    float64
+ 7   Processing Method  207 non-null    float64
+dtypes: float64(8)
+memory usage: 13.1 KB
+None</code></pre>
+</div>
+</div>
+</section>
+<section id="step-4-cleaning-is-done-time-to-investigate-feature-importance" class="level2">
+<h2 class="anchored" data-anchor-id="step-4-cleaning-is-done-time-to-investigate-feature-importance">Step 4: Cleaning is done, time to investigate feature importance</h2>
+<p>I am going to use a random forest classifier to determine what features are most relevant to predicting coffee variety.</p>
+<div class="cell" data-execution_count="4">
+<details>
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb6"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a><span class="co"># do random forest to find out what the most important features are</span></span>
+<span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a>coffee_enc_copy <span class="op">=</span> coffee_imp.copy()</span>
+<span id="cb6-3"><a href="#cb6-3" aria-hidden="true" tabindex="-1"></a>train_set_X, test_set_X, train_set_y, test_set_y <span class="op">=</span> train_test_split(coffee_enc_copy.drop(<span class="st">'Variety'</span>, axis<span class="op">=</span><span class="st">'columns'</span>), coffee_enc_copy[<span class="st">'Variety'</span>], test_size<span class="op">=</span><span class="fl">0.2</span>, random_state<span class="op">=</span><span class="dv">42</span>)</span>
+<span id="cb6-4"><a href="#cb6-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-5"><a href="#cb6-5" aria-hidden="true" tabindex="-1"></a>rnd_clf_coffee <span class="op">=</span> RandomForestClassifier(n_estimators<span class="op">=</span><span class="dv">500</span>, max_leaf_nodes<span class="op">=</span><span class="dv">16</span>,</span>
+<span id="cb6-6"><a href="#cb6-6" aria-hidden="true" tabindex="-1"></a>                                 n_jobs<span class="op">=-</span><span class="dv">1</span>, random_state<span class="op">=</span><span class="dv">42</span>)</span>
+<span id="cb6-7"><a href="#cb6-7" aria-hidden="true" tabindex="-1"></a>rnd_clf_coffee.fit(train_set_X, train_set_y)</span>
+<span id="cb6-8"><a href="#cb6-8" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-9"><a href="#cb6-9" aria-hidden="true" tabindex="-1"></a><span class="co"># look at the relationship</span></span>
+<span id="cb6-10"><a href="#cb6-10" aria-hidden="true" tabindex="-1"></a>feature_importances <span class="op">=</span> pd.Series(rnd_clf_coffee.feature_importances_, train_set_X.columns).sort_values()</span>
+<span id="cb6-11"><a href="#cb6-11" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-12"><a href="#cb6-12" aria-hidden="true" tabindex="-1"></a>plt.barh(feature_importances.index, feature_importances.values <span class="op">*</span> <span class="dv">100</span>, color<span class="op">=</span><span class="st">'brown'</span>)</span>
+<span id="cb6-13"><a href="#cb6-13" aria-hidden="true" tabindex="-1"></a>plt.ylabel(<span class="st">'Feature'</span>)</span>
+<span id="cb6-14"><a href="#cb6-14" aria-hidden="true" tabindex="-1"></a>plt.xlabel(<span class="st">'Percentage Feature Importance'</span>)</span>
+<span id="cb6-15"><a href="#cb6-15" aria-hidden="true" tabindex="-1"></a>plt.title(<span class="st">'Feature Importance of Coffee Features to Coffee Variety'</span>)</span>
+<span id="cb6-16"><a href="#cb6-16" aria-hidden="true" tabindex="-1"></a>plt.show()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+<div class="cell-output cell-output-display">
+<p><img src="index_files/figure-html/cell-5-output-1.png" width="693" height="449"></p>
+</div>
+</div>
+<p>There are a couple interesting things to note in this bar chart. The first is the order of the important features: altitude average is most important at a little over 20%, then Country of Origin at around 20%. The second is that altitude average is more important than altitude, but I created altitude average from altitude, so shouldn’t they be the same? The reason they are not is that the label encoder assumes there is no relation between the unique values in the column, so a super high altitude could be labeled 0 and a super low altitude could be labeled 207 (since that is the number of items in each column). Clearly, being able to understand that altitude is a numerical value is important to this model. With that in mind, that also means that country of origin might be less useable after being run through a label encoder than if I had found a way of imparting relative geographic location into the numerical representation of country of origin.</p>
+</section>
+<section id="step-5-run-a-k-means-on-the-top-2-most-important-coffee-features-to-variety" class="level2">
+<h2 class="anchored" data-anchor-id="step-5-run-a-k-means-on-the-top-2-most-important-coffee-features-to-variety">Step 5: Run a K-Means on the top 2 most important coffee features to variety</h2>
+<p>The top 2 features are altitude average and country of origin, so naturally we will do our K-Means clustering algorithm on those variables. I want altitude on the y axis because it is the vertical column and is a good representation of actual altitude. I will also use 7 clusters because that is how many varieties of coffee there are in this dataset.</p>
+<div class="cell" data-execution_count="5">
+<details>
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb7"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a><span class="co"># aroma_alt_np = np.array(coffee_imp[['Aroma', 'Altitude Avg']])</span></span>
+<span id="cb7-2"><a href="#cb7-2" aria-hidden="true" tabindex="-1"></a>altitude_country_np <span class="op">=</span> np.array(coffee_imp[[<span class="st">'Country of Origin'</span>, <span class="st">'Altitude Avg'</span>]])</span>
+<span id="cb7-3"><a href="#cb7-3" aria-hidden="true" tabindex="-1"></a><span class="co"># k-means clusterer</span></span>
+<span id="cb7-4"><a href="#cb7-4" aria-hidden="true" tabindex="-1"></a>k <span class="op">=</span> <span class="dv">7</span></span>
+<span id="cb7-5"><a href="#cb7-5" aria-hidden="true" tabindex="-1"></a>kmeans <span class="op">=</span> KMeans(n_clusters<span class="op">=</span>k, random_state<span class="op">=</span><span class="dv">42</span>)</span>
+<span id="cb7-6"><a href="#cb7-6" aria-hidden="true" tabindex="-1"></a>y_pred <span class="op">=</span> kmeans.fit_predict(altitude_country_np)</span>
+<span id="cb7-7"><a href="#cb7-7" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-8"><a href="#cb7-8" aria-hidden="true" tabindex="-1"></a><span class="co"># plot decision boundaries</span></span>
+<span id="cb7-9"><a href="#cb7-9" aria-hidden="true" tabindex="-1"></a>mins <span class="op">=</span> altitude_country_np.<span class="bu">min</span>(axis<span class="op">=</span><span class="dv">0</span>) <span class="op">-</span> <span class="fl">0.1</span></span>
+<span id="cb7-10"><a href="#cb7-10" aria-hidden="true" tabindex="-1"></a>maxs <span class="op">=</span> altitude_country_np.<span class="bu">max</span>(axis<span class="op">=</span><span class="dv">0</span>) <span class="op">+</span> <span class="fl">0.1</span></span>
+<span id="cb7-11"><a href="#cb7-11" aria-hidden="true" tabindex="-1"></a>xx, yy <span class="op">=</span> np.meshgrid(np.linspace(mins[<span class="dv">0</span>], maxs[<span class="dv">0</span>], <span class="dv">1000</span>),</span>
+<span id="cb7-12"><a href="#cb7-12" aria-hidden="true" tabindex="-1"></a>                      np.linspace(mins[<span class="dv">1</span>], maxs[<span class="dv">1</span>], <span class="dv">1000</span>))</span>
+<span id="cb7-13"><a href="#cb7-13" aria-hidden="true" tabindex="-1"></a>Z <span class="op">=</span> kmeans.predict(np.c_[xx.ravel(), yy.ravel()])</span>
+<span id="cb7-14"><a href="#cb7-14" aria-hidden="true" tabindex="-1"></a>Z <span class="op">=</span> Z.reshape(xx.shape)</span>
+<span id="cb7-15"><a href="#cb7-15" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-16"><a href="#cb7-16" aria-hidden="true" tabindex="-1"></a>plt.contourf(Z, extent<span class="op">=</span>(mins[<span class="dv">0</span>], maxs[<span class="dv">0</span>], mins[<span class="dv">1</span>], maxs[<span class="dv">1</span>]),</span>
+<span id="cb7-17"><a href="#cb7-17" aria-hidden="true" tabindex="-1"></a>            cmap<span class="op">=</span><span class="st">"copper"</span>, alpha<span class="op">=</span><span class="fl">0.6</span>)</span>
+<span id="cb7-18"><a href="#cb7-18" aria-hidden="true" tabindex="-1"></a>plt.contour(Z, extent<span class="op">=</span>(mins[<span class="dv">0</span>], maxs[<span class="dv">0</span>], mins[<span class="dv">1</span>], maxs[<span class="dv">1</span>]),</span>
+<span id="cb7-19"><a href="#cb7-19" aria-hidden="true" tabindex="-1"></a>            linewidths<span class="op">=</span><span class="dv">1</span>, colors<span class="op">=</span><span class="st">'k'</span>)</span>
+<span id="cb7-20"><a href="#cb7-20" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-21"><a href="#cb7-21" aria-hidden="true" tabindex="-1"></a><span class="co"># plot data</span></span>
+<span id="cb7-22"><a href="#cb7-22" aria-hidden="true" tabindex="-1"></a>sns.scatterplot(data<span class="op">=</span>coffee_imp, x<span class="op">=</span><span class="st">'Country of Origin'</span>, y<span class="op">=</span><span class="st">'Altitude Avg'</span>, s<span class="op">=</span><span class="dv">20</span>, hue<span class="op">=</span><span class="st">'Variety'</span>, palette<span class="op">=</span>sns.color_palette(<span class="st">"Set2"</span>, as_cmap<span class="op">=</span><span class="va">True</span>))</span>
+<span id="cb7-23"><a href="#cb7-23" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-24"><a href="#cb7-24" aria-hidden="true" tabindex="-1"></a><span class="co"># plot centroids</span></span>
+<span id="cb7-25"><a href="#cb7-25" aria-hidden="true" tabindex="-1"></a>centroids <span class="op">=</span> kmeans.cluster_centers_</span>
+<span id="cb7-26"><a href="#cb7-26" aria-hidden="true" tabindex="-1"></a>plt.scatter(centroids[:, <span class="dv">0</span>], centroids[:, <span class="dv">1</span>],</span>
+<span id="cb7-27"><a href="#cb7-27" aria-hidden="true" tabindex="-1"></a>                marker<span class="op">=</span><span class="st">'o'</span>, s<span class="op">=</span><span class="dv">35</span>, linewidths<span class="op">=</span><span class="dv">8</span>,</span>
+<span id="cb7-28"><a href="#cb7-28" aria-hidden="true" tabindex="-1"></a>                color<span class="op">=</span><span class="st">'white'</span>, zorder<span class="op">=</span><span class="dv">10</span>, alpha<span class="op">=</span><span class="fl">0.9</span>)</span>
+<span id="cb7-29"><a href="#cb7-29" aria-hidden="true" tabindex="-1"></a>plt.scatter(centroids[:, <span class="dv">0</span>], centroids[:, <span class="dv">1</span>],</span>
+<span id="cb7-30"><a href="#cb7-30" aria-hidden="true" tabindex="-1"></a>                marker<span class="op">=</span><span class="st">'x'</span>, s<span class="op">=</span><span class="dv">2</span>, linewidths<span class="op">=</span><span class="dv">12</span>,</span>
+<span id="cb7-31"><a href="#cb7-31" aria-hidden="true" tabindex="-1"></a>                color<span class="op">=</span><span class="st">'black'</span>, zorder<span class="op">=</span><span class="dv">11</span>, alpha<span class="op">=</span><span class="dv">1</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+<div class="cell-output cell-output-stderr">
+<pre><code>C:\Users\Erica\AppData\Local\Programs\Python\Python312\Lib\site-packages\sklearn\cluster\_kmeans.py:1416: FutureWarning: The default value of `n_init` will change from 10 to 'auto' in 1.4. Set the value of `n_init` explicitly to suppress the warning
+  super()._check_params_vs_input(X, default_n_init=10)</code></pre>
+</div>
+<div class="cell-output cell-output-display" data-execution_count="5">
+<pre><code>&lt;matplotlib.collections.PathCollection at 0x1fb83bf7740&gt;</code></pre>
+</div>
+<div class="cell-output cell-output-display">
+<p><img src="index_files/figure-html/cell-6-output-3.png" width="601" height="429"></p>
+</div>
+</div>
+</section>
+<section id="step-6-reevaluate" class="level2">
+<h2 class="anchored" data-anchor-id="step-6-reevaluate">Step 6: Reevaluate</h2>
+<p>That chart looks… not great. One reason could be because Country of Origin was originally categorical, and the label encoder may have not done a great job. Just for fun, we’ll take the feature with the highest feature importance to variety that started out as numerical - aroma. That is how people can tell between coffee beans, lets hope the same goes for a K-Means clustering algorithm!</p>
+<div class="cell" data-execution_count="6">
+<details>
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb10"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a>aroma_alt_np <span class="op">=</span> np.array(coffee_imp[[<span class="st">'Aroma'</span>, <span class="st">'Altitude Avg'</span>]])</span>
+<span id="cb10-2"><a href="#cb10-2" aria-hidden="true" tabindex="-1"></a><span class="co"># k-means clusterer</span></span>
+<span id="cb10-3"><a href="#cb10-3" aria-hidden="true" tabindex="-1"></a>k <span class="op">=</span> <span class="dv">7</span></span>
+<span id="cb10-4"><a href="#cb10-4" aria-hidden="true" tabindex="-1"></a>kmeans <span class="op">=</span> KMeans(n_clusters<span class="op">=</span>k, random_state<span class="op">=</span><span class="dv">42</span>)</span>
+<span id="cb10-5"><a href="#cb10-5" aria-hidden="true" tabindex="-1"></a>y_pred <span class="op">=</span> kmeans.fit_predict(aroma_alt_np)</span>
+<span id="cb10-6"><a href="#cb10-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb10-7"><a href="#cb10-7" aria-hidden="true" tabindex="-1"></a><span class="co"># plot decision boundaries</span></span>
+<span id="cb10-8"><a href="#cb10-8" aria-hidden="true" tabindex="-1"></a>mins <span class="op">=</span> aroma_alt_np.<span class="bu">min</span>(axis<span class="op">=</span><span class="dv">0</span>) <span class="op">-</span> <span class="fl">0.1</span></span>
+<span id="cb10-9"><a href="#cb10-9" aria-hidden="true" tabindex="-1"></a>maxs <span class="op">=</span> aroma_alt_np.<span class="bu">max</span>(axis<span class="op">=</span><span class="dv">0</span>) <span class="op">+</span> <span class="fl">0.1</span></span>
+<span id="cb10-10"><a href="#cb10-10" aria-hidden="true" tabindex="-1"></a>xx, yy <span class="op">=</span> np.meshgrid(np.linspace(mins[<span class="dv">0</span>], maxs[<span class="dv">0</span>], <span class="dv">1000</span>),</span>
+<span id="cb10-11"><a href="#cb10-11" aria-hidden="true" tabindex="-1"></a>                      np.linspace(mins[<span class="dv">1</span>], maxs[<span class="dv">1</span>], <span class="dv">1000</span>))</span>
+<span id="cb10-12"><a href="#cb10-12" aria-hidden="true" tabindex="-1"></a>Z <span class="op">=</span> kmeans.predict(np.c_[xx.ravel(), yy.ravel()])</span>
+<span id="cb10-13"><a href="#cb10-13" aria-hidden="true" tabindex="-1"></a>Z <span class="op">=</span> Z.reshape(xx.shape)</span>
+<span id="cb10-14"><a href="#cb10-14" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb10-15"><a href="#cb10-15" aria-hidden="true" tabindex="-1"></a>plt.contourf(Z, extent<span class="op">=</span>(mins[<span class="dv">0</span>], maxs[<span class="dv">0</span>], mins[<span class="dv">1</span>], maxs[<span class="dv">1</span>]),</span>
+<span id="cb10-16"><a href="#cb10-16" aria-hidden="true" tabindex="-1"></a>            cmap<span class="op">=</span><span class="st">"copper"</span>, alpha<span class="op">=</span><span class="fl">0.6</span>)</span>
+<span id="cb10-17"><a href="#cb10-17" aria-hidden="true" tabindex="-1"></a>plt.contour(Z, extent<span class="op">=</span>(mins[<span class="dv">0</span>], maxs[<span class="dv">0</span>], mins[<span class="dv">1</span>], maxs[<span class="dv">1</span>]),</span>
+<span id="cb10-18"><a href="#cb10-18" aria-hidden="true" tabindex="-1"></a>            linewidths<span class="op">=</span><span class="dv">1</span>, colors<span class="op">=</span><span class="st">'k'</span>)</span>
+<span id="cb10-19"><a href="#cb10-19" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb10-20"><a href="#cb10-20" aria-hidden="true" tabindex="-1"></a><span class="co"># plot data</span></span>
+<span id="cb10-21"><a href="#cb10-21" aria-hidden="true" tabindex="-1"></a>sns.scatterplot(data<span class="op">=</span>coffee_imp, x<span class="op">=</span><span class="st">'Aroma'</span>, y<span class="op">=</span><span class="st">'Altitude Avg'</span>, s<span class="op">=</span><span class="dv">20</span>, hue<span class="op">=</span><span class="st">'Variety'</span>, palette<span class="op">=</span>sns.color_palette(<span class="st">"Set2"</span>, as_cmap<span class="op">=</span><span class="va">True</span>))</span>
+<span id="cb10-22"><a href="#cb10-22" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb10-23"><a href="#cb10-23" aria-hidden="true" tabindex="-1"></a><span class="co"># plot centroids</span></span>
+<span id="cb10-24"><a href="#cb10-24" aria-hidden="true" tabindex="-1"></a>centroids <span class="op">=</span> kmeans.cluster_centers_</span>
+<span id="cb10-25"><a href="#cb10-25" aria-hidden="true" tabindex="-1"></a>plt.scatter(centroids[:, <span class="dv">0</span>], centroids[:, <span class="dv">1</span>],</span>
+<span id="cb10-26"><a href="#cb10-26" aria-hidden="true" tabindex="-1"></a>                marker<span class="op">=</span><span class="st">'o'</span>, s<span class="op">=</span><span class="dv">35</span>, linewidths<span class="op">=</span><span class="dv">8</span>,</span>
+<span id="cb10-27"><a href="#cb10-27" aria-hidden="true" tabindex="-1"></a>                color<span class="op">=</span><span class="st">'white'</span>, zorder<span class="op">=</span><span class="dv">10</span>, alpha<span class="op">=</span><span class="fl">0.9</span>)</span>
+<span id="cb10-28"><a href="#cb10-28" aria-hidden="true" tabindex="-1"></a>plt.scatter(centroids[:, <span class="dv">0</span>], centroids[:, <span class="dv">1</span>],</span>
+<span id="cb10-29"><a href="#cb10-29" aria-hidden="true" tabindex="-1"></a>                marker<span class="op">=</span><span class="st">'x'</span>, s<span class="op">=</span><span class="dv">2</span>, linewidths<span class="op">=</span><span class="dv">12</span>,</span>
+<span id="cb10-30"><a href="#cb10-30" aria-hidden="true" tabindex="-1"></a>                color<span class="op">=</span><span class="st">'black'</span>, zorder<span class="op">=</span><span class="dv">11</span>, alpha<span class="op">=</span><span class="dv">1</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+<div class="cell-output cell-output-stderr">
+<pre><code>C:\Users\Erica\AppData\Local\Programs\Python\Python312\Lib\site-packages\sklearn\cluster\_kmeans.py:1416: FutureWarning: The default value of `n_init` will change from 10 to 'auto' in 1.4. Set the value of `n_init` explicitly to suppress the warning
+  super()._check_params_vs_input(X, default_n_init=10)</code></pre>
+</div>
+<div class="cell-output cell-output-display" data-execution_count="6">
+<pre><code>&lt;matplotlib.collections.PathCollection at 0x1fb869405f0&gt;</code></pre>
+</div>
+<div class="cell-output cell-output-display">
+<p><img src="index_files/figure-html/cell-7-output-3.png" width="601" height="429"></p>
+</div>
+</div>
+<p>That does not look much better. Looks like we will need a better dataset to be able to do this, or to tweak the encoder enough that the values are more impactful.</p>
+
+
+</section>
+</section>
+
+</main> <!-- /main -->
+<script id="quarto-html-after-body" type="application/javascript">
+window.document.addEventListener("DOMContentLoaded", function (event) {
+  const toggleBodyColorMode = (bsSheetEl) => {
+    const mode = bsSheetEl.getAttribute("data-mode");
+    const bodyEl = window.document.querySelector("body");
+    if (mode === "dark") {
+      bodyEl.classList.add("quarto-dark");
+      bodyEl.classList.remove("quarto-light");
+    } else {
+      bodyEl.classList.add("quarto-light");
+      bodyEl.classList.remove("quarto-dark");
+    }
+  }
+  const toggleBodyColorPrimary = () => {
+    const bsSheetEl = window.document.querySelector("link#quarto-bootstrap");
+    if (bsSheetEl) {
+      toggleBodyColorMode(bsSheetEl);
+    }
+  }
+  toggleBodyColorPrimary();  
+  const icon = "";
+  const anchorJS = new window.AnchorJS();
+  anchorJS.options = {
+    placement: 'right',
+    icon: icon
+  };
+  anchorJS.add('.anchored');
+  const isCodeAnnotation = (el) => {
+    for (const clz of el.classList) {
+      if (clz.startsWith('code-annotation-')) {                     
+        return true;
+      }
+    }
+    return false;
+  }
+  const clipboard = new window.ClipboardJS('.code-copy-button', {
+    text: function(trigger) {
+      const codeEl = trigger.previousElementSibling.cloneNode(true);
+      for (const childEl of codeEl.children) {
+        if (isCodeAnnotation(childEl)) {
+          childEl.remove();
+        }
+      }
+      return codeEl.innerText;
+    }
+  });
+  clipboard.on('success', function(e) {
+    // button target
+    const button = e.trigger;
+    // don't keep focus
+    button.blur();
+    // flash "checked"
+    button.classList.add('code-copy-button-checked');
+    var currentTitle = button.getAttribute("title");
+    button.setAttribute("title", "Copied!");
+    let tooltip;
+    if (window.bootstrap) {
+      button.setAttribute("data-bs-toggle", "tooltip");
+      button.setAttribute("data-bs-placement", "left");
+      button.setAttribute("data-bs-title", "Copied!");
+      tooltip = new bootstrap.Tooltip(button, 
+        { trigger: "manual", 
+          customClass: "code-copy-button-tooltip",
+          offset: [0, -8]});
+      tooltip.show();    
+    }
+    setTimeout(function() {
+      if (tooltip) {
+        tooltip.hide();
+        button.removeAttribute("data-bs-title");
+        button.removeAttribute("data-bs-toggle");
+        button.removeAttribute("data-bs-placement");
+      }
+      button.setAttribute("title", currentTitle);
+      button.classList.remove('code-copy-button-checked');
+    }, 1000);
+    // clear code selection
+    e.clearSelection();
+  });
+  function tippyHover(el, contentFn) {
+    const config = {
+      allowHTML: true,
+      content: contentFn,
+      maxWidth: 500,
+      delay: 100,
+      arrow: false,
+      appendTo: function(el) {
+          return el.parentElement;
+      },
+      interactive: true,
+      interactiveBorder: 10,
+      theme: 'quarto',
+      placement: 'bottom-start'
+    };
+    window.tippy(el, config); 
+  }
+  const noterefs = window.document.querySelectorAll('a[role="doc-noteref"]');
+  for (var i=0; i<noterefs.length; i++) {
+    const ref = noterefs[i];
+    tippyHover(ref, function() {
+      // use id or data attribute instead here
+      let href = ref.getAttribute('data-footnote-href') || ref.getAttribute('href');
+      try { href = new URL(href).hash; } catch {}
+      const id = href.replace(/^#\/?/, "");
+      const note = window.document.getElementById(id);
+      return note.innerHTML;
+    });
+  }
+      let selectedAnnoteEl;
+      const selectorForAnnotation = ( cell, annotation) => {
+        let cellAttr = 'data-code-cell="' + cell + '"';
+        let lineAttr = 'data-code-annotation="' +  annotation + '"';
+        const selector = 'span[' + cellAttr + '][' + lineAttr + ']';
+        return selector;
+      }
+      const selectCodeLines = (annoteEl) => {
+        const doc = window.document;
+        const targetCell = annoteEl.getAttribute("data-target-cell");
+        const targetAnnotation = annoteEl.getAttribute("data-target-annotation");
+        const annoteSpan = window.document.querySelector(selectorForAnnotation(targetCell, targetAnnotation));
+        const lines = annoteSpan.getAttribute("data-code-lines").split(",");
+        const lineIds = lines.map((line) => {
+          return targetCell + "-" + line;
+        })
+        let top = null;
+        let height = null;
+        let parent = null;
+        if (lineIds.length > 0) {
+            //compute the position of the single el (top and bottom and make a div)
+            const el = window.document.getElementById(lineIds[0]);
+            top = el.offsetTop;
+            height = el.offsetHeight;
+            parent = el.parentElement.parentElement;
+          if (lineIds.length > 1) {
+            const lastEl = window.document.getElementById(lineIds[lineIds.length - 1]);
+            const bottom = lastEl.offsetTop + lastEl.offsetHeight;
+            height = bottom - top;
+          }
+          if (top !== null && height !== null && parent !== null) {
+            // cook up a div (if necessary) and position it 
+            let div = window.document.getElementById("code-annotation-line-highlight");
+            if (div === null) {
+              div = window.document.createElement("div");
+              div.setAttribute("id", "code-annotation-line-highlight");
+              div.style.position = 'absolute';
+              parent.appendChild(div);
+            }
+            div.style.top = top - 2 + "px";
+            div.style.height = height + 4 + "px";
+            let gutterDiv = window.document.getElementById("code-annotation-line-highlight-gutter");
+            if (gutterDiv === null) {
+              gutterDiv = window.document.createElement("div");
+              gutterDiv.setAttribute("id", "code-annotation-line-highlight-gutter");
+              gutterDiv.style.position = 'absolute';
+              const codeCell = window.document.getElementById(targetCell);
+              const gutter = codeCell.querySelector('.code-annotation-gutter');
+              gutter.appendChild(gutterDiv);
+            }
+            gutterDiv.style.top = top - 2 + "px";
+            gutterDiv.style.height = height + 4 + "px";
+          }
+          selectedAnnoteEl = annoteEl;
+        }
+      };
+      const unselectCodeLines = () => {
+        const elementsIds = ["code-annotation-line-highlight", "code-annotation-line-highlight-gutter"];
+        elementsIds.forEach((elId) => {
+          const div = window.document.getElementById(elId);
+          if (div) {
+            div.remove();
+          }
+        });
+        selectedAnnoteEl = undefined;
+      };
+      // Attach click handler to the DT
+      const annoteDls = window.document.querySelectorAll('dt[data-target-cell]');
+      for (const annoteDlNode of annoteDls) {
+        annoteDlNode.addEventListener('click', (event) => {
+          const clickedEl = event.target;
+          if (clickedEl !== selectedAnnoteEl) {
+            unselectCodeLines();
+            const activeEl = window.document.querySelector('dt[data-target-cell].code-annotation-active');
+            if (activeEl) {
+              activeEl.classList.remove('code-annotation-active');
+            }
+            selectCodeLines(clickedEl);
+            clickedEl.classList.add('code-annotation-active');
+          } else {
+            // Unselect the line
+            unselectCodeLines();
+            clickedEl.classList.remove('code-annotation-active');
+          }
+        });
+      }
+  const findCites = (el) => {
+    const parentEl = el.parentElement;
+    if (parentEl) {
+      const cites = parentEl.dataset.cites;
+      if (cites) {
+        return {
+          el,
+          cites: cites.split(' ')
+        };
+      } else {
+        return findCites(el.parentElement)
+      }
+    } else {
+      return undefined;
+    }
+  };
+  var bibliorefs = window.document.querySelectorAll('a[role="doc-biblioref"]');
+  for (var i=0; i<bibliorefs.length; i++) {
+    const ref = bibliorefs[i];
+    const citeInfo = findCites(ref);
+    if (citeInfo) {
+      tippyHover(citeInfo.el, function() {
+        var popup = window.document.createElement('div');
+        citeInfo.cites.forEach(function(cite) {
+          var citeDiv = window.document.createElement('div');
+          citeDiv.classList.add('hanging-indent');
+          citeDiv.classList.add('csl-entry');
+          var biblioDiv = window.document.getElementById('ref-' + cite);
+          if (biblioDiv) {
+            citeDiv.innerHTML = biblioDiv.innerHTML;
+          }
+          popup.appendChild(citeDiv);
+        });
+        return popup.innerHTML;
+      });
+    }
+  }
+});
+</script>
+</div> <!-- /content -->
+
+
+
+</body></html>
