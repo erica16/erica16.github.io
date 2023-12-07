@@ -1,0 +1,611 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en"><head>
+
+<meta charset="utf-8">
+<meta name="generator" content="quarto-1.3.450">
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+
+
+<title>test2 - Quarto Basics</title>
+<style>
+code{white-space: pre-wrap;}
+span.smallcaps{font-variant: small-caps;}
+div.columns{display: flex; gap: min(4vw, 1.5em);}
+div.column{flex: auto; overflow-x: auto;}
+div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+ul.task-list{list-style: none;}
+ul.task-list li input[type="checkbox"] {
+  width: 0.8em;
+  margin: 0 0.8em 0.2em -1em; /* quarto-specific, see https://github.com/quarto-dev/quarto-cli/issues/4556 */ 
+  vertical-align: middle;
+}
+/* CSS for syntax highlighting */
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+div.sourceCode { margin: 1em 0; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+  { counter-reset: source-line 0; }
+pre.numberSource code > span
+  { position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+  { content: counter(source-line);
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; display: inline-block;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+  }
+pre.numberSource { margin-left: 3em;  padding-left: 4px; }
+div.sourceCode
+  {   }
+@media screen {
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+}
+</style>
+
+
+<script src="../../site_libs/quarto-nav/quarto-nav.js"></script>
+<script src="../../site_libs/quarto-nav/headroom.min.js"></script>
+<script src="../../site_libs/clipboard/clipboard.min.js"></script>
+<script src="../../site_libs/quarto-search/autocomplete.umd.js"></script>
+<script src="../../site_libs/quarto-search/fuse.min.js"></script>
+<script src="../../site_libs/quarto-search/quarto-search.js"></script>
+<meta name="quarto:offset" content="../../">
+<script src="../../site_libs/quarto-html/quarto.js"></script>
+<script src="../../site_libs/quarto-html/popper.min.js"></script>
+<script src="../../site_libs/quarto-html/tippy.umd.min.js"></script>
+<script src="../../site_libs/quarto-html/anchor.min.js"></script>
+<link href="../../site_libs/quarto-html/tippy.css" rel="stylesheet">
+<link href="../../site_libs/quarto-html/quarto-syntax-highlighting.css" rel="stylesheet" id="quarto-text-highlighting-styles">
+<script src="../../site_libs/bootstrap/bootstrap.min.js"></script>
+<link href="../../site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
+<link href="../../site_libs/bootstrap/bootstrap.min.css" rel="stylesheet" id="quarto-bootstrap" data-mode="light">
+<script id="quarto-search-options" type="application/json">{
+  "location": "navbar",
+  "copy-button": false,
+  "collapse-after": 3,
+  "panel-placement": "end",
+  "type": "overlay",
+  "limit": 20,
+  "language": {
+    "search-no-results-text": "No results",
+    "search-matching-documents-text": "matching documents",
+    "search-copy-link-title": "Copy link to search",
+    "search-hide-matches-text": "Hide additional matches",
+    "search-more-match-text": "more match in this document",
+    "search-more-matches-text": "more matches in this document",
+    "search-clear-button-title": "Clear",
+    "search-detached-cancel-button-title": "Cancel",
+    "search-submit-button-title": "Submit",
+    "search-label": "Search"
+  }
+}</script>
+
+
+<link rel="stylesheet" href="../../styles.css">
+</head>
+
+<body class="nav-fixed fullcontent">
+
+<div id="quarto-search-results"></div>
+  <header id="quarto-header" class="headroom fixed-top">
+    <nav class="navbar navbar-expand-lg navbar-dark ">
+      <div class="navbar-container container-fluid">
+      <div class="navbar-brand-container">
+    <a class="navbar-brand" href="../../index.html">
+    <span class="navbar-title">test2</span>
+    </a>
+  </div>
+            <div id="quarto-search" class="" title="Search"></div>
+          <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarCollapse" aria-controls="navbarCollapse" aria-expanded="false" aria-label="Toggle navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
+  <span class="navbar-toggler-icon"></span>
+</button>
+          <div class="collapse navbar-collapse" id="navbarCollapse">
+            <ul class="navbar-nav navbar-nav-scroll ms-auto">
+  <li class="nav-item">
+    <a class="nav-link" href="../../about.html" rel="" target="">
+ <span class="menu-text">About</span></a>
+  </li>  
+  <li class="nav-item compact">
+    <a class="nav-link" href="https://github.com/" rel="" target=""><i class="bi bi-github" role="img">
+</i> 
+ <span class="menu-text"></span></a>
+  </li>  
+  <li class="nav-item compact">
+    <a class="nav-link" href="https://twitter.com" rel="" target=""><i class="bi bi-twitter" role="img">
+</i> 
+ <span class="menu-text"></span></a>
+  </li>  
+</ul>
+            <div class="quarto-navbar-tools">
+</div>
+          </div> <!-- /navcollapse -->
+      </div> <!-- /container-fluid -->
+    </nav>
+</header>
+<!-- content -->
+<header id="title-block-header" class="quarto-title-block default page-columns page-full">
+  <div class="quarto-title-banner page-columns page-full">
+    <div class="quarto-title column-body">
+      <h1 class="title">Quarto Basics</h1>
+                      </div>
+  </div>
+    
+  
+  <div class="quarto-title-meta">
+
+      
+    
+      
+    </div>
+    
+  
+  </header><div id="quarto-content" class="quarto-container page-columns page-rows-contents page-layout-article page-navbar">
+<!-- sidebar -->
+<!-- margin-sidebar -->
+    
+<!-- main -->
+<main class="content quarto-banner-title-block" id="quarto-document-content">
+
+
+
+
+<section id="anomalyoutlier-detection" class="level1">
+<h1>Anomaly/Outlier Detection</h1>
+<section id="on-the-correlation-between-co2-emissions-and-economic-inequality-metric-by-country" class="level2">
+<h2 class="anchored" data-anchor-id="on-the-correlation-between-co2-emissions-and-economic-inequality-metric-by-country">On the correlation between CO2 Emissions and Economic Inequality metric by country</h2>
+<p>As someone who majored in Environmental Informatics for my undergrad at Virginia Tech, exploring climate data and its relationship to non-climate datasets is something that I am familiar with and very passionate about. I wanted to make sure I had a set of data to use for a study on anomaly and outlier detection that would show a strong correlation between the two variables, but maybe not one that would come straight to mind for the average person. I had a hunch that the Inequality index for a country and the CO2 emissions for a country might be correlated, so I found a C02 emissions dataset from <a href="https://www.kaggle.com/datasets/ankanhore545/carbon-dioxide-emissions-of-the-world" class="uri">https://www.kaggle.com/datasets/ankanhore545/carbon-dioxide-emissions-of-the-world</a> and an Economic Inequality dataset from <a href="https://ourworldindata.org/economic-inequality" class="uri">https://ourworldindata.org/economic-inequality</a>.</p>
+</section>
+<section id="what-are-these-variables" class="level2">
+<h2 class="anchored" data-anchor-id="what-are-these-variables">What are these variables?</h2>
+<p><strong>C02</strong>, or carbon dioxide, is one of the primary greenhouse gases responsible for driving climate change. As a greenhouse gas, its presence traps infrared radiation (heat) in the atmosphere which keeps earth comfortable in natural amounts but is detrimental when the amounts are much higher than they would normally be due to human-caused spikes in CO2 emissions. Massive increases in carbon dioxide emissions are primarily due to burning fossil fuels and other biomass-based fuels for energy used in industrial, housing, and transportation settings, and large changes in land use patterns. <strong>Income Inequality</strong> per country is measured with the <strong>Gini Coefficient</strong>, which is a measure of the income inequality from 0 to 1 where 0 is perfect income equality and 1 is the maximal inequality. It helps assess how evenly or unevenly the wealth in a population is distributed. It is calculated by measuring a value like income on a frequency distribution, where a 45 degree angle would indicate perfect wealth distribution.</p>
+</section>
+<section id="step-1-clean-data-and-view-the-basic-scatterplot" class="level2">
+<h2 class="anchored" data-anchor-id="step-1-clean-data-and-view-the-basic-scatterplot">Step 1: Clean data and view the basic scatterplot</h2>
+<p>The first thing to do after downloading the datasets and hosting them on my git repo was to explore the data, and the best way to do that is to get it onto a visualization. Before being able to visualize it though, the data needs to be cleaned - in this case, that means removing rows without useable data and making the dataframes easier to use by filtering out unnecessary columns. After the data is presentable in two separate dataframes, it needs to be merged into the same dataframe so that it can be graphed. I merged the CO2 Emissions dataframe and the Income Inequality index dataframe on Country after filtering for just rows in the Inequality dataframe where the year was 2018. I chose 2018 because it was the most recent year with data in both datasets.</p>
+<div class="cell" data-execution_count="1">
+<details>
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb1"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> matplotlib.pyplot <span class="im">as</span> plt</span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> numpy <span class="im">as</span> np</span>
+<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> pandas <span class="im">as</span> pd</span>
+<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> seaborn <span class="im">as</span> sns</span>
+<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> sklearn.impute <span class="im">import</span> SimpleImputer</span>
+<span id="cb1-6"><a href="#cb1-6" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> sklearn.cluster <span class="im">import</span> KMeans</span>
+<span id="cb1-7"><a href="#cb1-7" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-8"><a href="#cb1-8" aria-hidden="true" tabindex="-1"></a>emissions_csv <span class="op">=</span> <span class="st">'https://raw.githubusercontent.com/erica16/ml1_blogs/main/data/historical_emissions.csv'</span></span>
+<span id="cb1-9"><a href="#cb1-9" aria-hidden="true" tabindex="-1"></a>inequality_csv <span class="op">=</span><span class="st">'https://raw.githubusercontent.com/erica16/ml1_blogs/main/data/inequality.csv'</span></span>
+<span id="cb1-10"><a href="#cb1-10" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-11"><a href="#cb1-11" aria-hidden="true" tabindex="-1"></a><span class="co">#read in datasets</span></span>
+<span id="cb1-12"><a href="#cb1-12" aria-hidden="true" tabindex="-1"></a>emissions_df <span class="op">=</span> pd.read_csv(emissions_csv)</span>
+<span id="cb1-13"><a href="#cb1-13" aria-hidden="true" tabindex="-1"></a>inequality_df <span class="op">=</span> pd.read_csv(inequality_csv)</span>
+<span id="cb1-14"><a href="#cb1-14" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-15"><a href="#cb1-15" aria-hidden="true" tabindex="-1"></a><span class="co">#clean data</span></span>
+<span id="cb1-16"><a href="#cb1-16" aria-hidden="true" tabindex="-1"></a>inequality_filtered <span class="op">=</span> inequality_df.<span class="bu">filter</span>([<span class="st">'Country'</span>, <span class="st">'Year'</span>, <span class="st">'Gini coefficient (before tax) (World Inequality Database)'</span>])</span>
+<span id="cb1-17"><a href="#cb1-17" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-18"><a href="#cb1-18" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(emissions_df.info())</span>
+<span id="cb1-19"><a href="#cb1-19" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-20"><a href="#cb1-20" aria-hidden="true" tabindex="-1"></a><span class="co">#filter to 2018</span></span>
+<span id="cb1-21"><a href="#cb1-21" aria-hidden="true" tabindex="-1"></a>inequality_2018 <span class="op">=</span> inequality_filtered.loc[inequality_filtered[<span class="st">'Year'</span>] <span class="op">==</span> <span class="dv">2018</span>]</span>
+<span id="cb1-22"><a href="#cb1-22" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(inequality_2018.info())</span>
+<span id="cb1-23"><a href="#cb1-23" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-24"><a href="#cb1-24" aria-hidden="true" tabindex="-1"></a><span class="co">#merge dfs on country</span></span>
+<span id="cb1-25"><a href="#cb1-25" aria-hidden="true" tabindex="-1"></a>inequality_emissions_df <span class="op">=</span> inequality_2018.merge(emissions_df, on<span class="op">=</span><span class="st">'Country'</span>)</span>
+<span id="cb1-26"><a href="#cb1-26" aria-hidden="true" tabindex="-1"></a>in_em_nums <span class="op">=</span> inequality_emissions_df.select_dtypes(include<span class="op">=</span>[np.number])</span>
+<span id="cb1-27"><a href="#cb1-27" aria-hidden="true" tabindex="-1"></a>imputer <span class="op">=</span> SimpleImputer(strategy<span class="op">=</span><span class="st">"median"</span>)</span>
+<span id="cb1-28"><a href="#cb1-28" aria-hidden="true" tabindex="-1"></a>imputer.fit(in_em_nums)</span>
+<span id="cb1-29"><a href="#cb1-29" aria-hidden="true" tabindex="-1"></a>in_em_imputed <span class="op">=</span> imputer.transform(in_em_nums)</span>
+<span id="cb1-30"><a href="#cb1-30" aria-hidden="true" tabindex="-1"></a>inequality_emissions_df[in_em_nums.columns] <span class="op">=</span> in_em_imputed</span>
+<span id="cb1-31"><a href="#cb1-31" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-32"><a href="#cb1-32" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-33"><a href="#cb1-33" aria-hidden="true" tabindex="-1"></a><span class="co"># Visualize the data</span></span>
+<span id="cb1-34"><a href="#cb1-34" aria-hidden="true" tabindex="-1"></a>sns.scatterplot(data<span class="op">=</span>inequality_emissions_df, x<span class="op">=</span><span class="st">'Gini coefficient (before tax) (World Inequality Database)'</span> ,y<span class="op">=</span><span class="st">'2018'</span>)</span>
+<span id="cb1-35"><a href="#cb1-35" aria-hidden="true" tabindex="-1"></a>plt.xlabel(<span class="st">'Inequality index (Gini Coefficient, before tax)'</span>)</span>
+<span id="cb1-36"><a href="#cb1-36" aria-hidden="true" tabindex="-1"></a>plt.ylabel(<span class="st">'CO2 Emissions in MtCO₂e'</span>)</span>
+<span id="cb1-37"><a href="#cb1-37" aria-hidden="true" tabindex="-1"></a>plt.title(<span class="st">'Correlation between CO2 Emissions and Inequality metric by Country in 2018'</span>)</span>
+<span id="cb1-38"><a href="#cb1-38" aria-hidden="true" tabindex="-1"></a>plt.show()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+<div class="cell-output cell-output-stdout">
+<pre><code>&lt;class 'pandas.core.frame.DataFrame'&gt;
+RangeIndex: 195 entries, 0 to 194
+Data columns (total 34 columns):
+ #   Column       Non-Null Count  Dtype  
+---  ------       --------------  -----  
+ 0   Country      195 non-null    object 
+ 1   Data source  195 non-null    object 
+ 2   Sector       195 non-null    object 
+ 3   Gas          195 non-null    object 
+ 4   Unit         195 non-null    object 
+ 5   2018         195 non-null    float64
+ 6   2017         195 non-null    float64
+ 7   2016         195 non-null    float64
+ 8   2015         195 non-null    float64
+ 9   2014         195 non-null    float64
+ 10  2013         195 non-null    float64
+ 11  2012         195 non-null    float64
+ 12  2011         195 non-null    float64
+ 13  2010         195 non-null    float64
+ 14  2009         195 non-null    float64
+ 15  2008         195 non-null    float64
+ 16  2007         195 non-null    float64
+ 17  2006         195 non-null    float64
+ 18  2005         195 non-null    float64
+ 19  2004         195 non-null    float64
+ 20  2003         195 non-null    float64
+ 21  2002         195 non-null    float64
+ 22  2001         195 non-null    float64
+ 23  2000         195 non-null    float64
+ 24  1999         195 non-null    float64
+ 25  1998         195 non-null    float64
+ 26  1997         195 non-null    float64
+ 27  1996         195 non-null    float64
+ 28  1995         195 non-null    float64
+ 29  1994         195 non-null    float64
+ 30  1993         195 non-null    float64
+ 31  1992         195 non-null    float64
+ 32  1991         195 non-null    float64
+ 33  1990         194 non-null    float64
+dtypes: float64(29), object(5)
+memory usage: 51.9+ KB
+None
+&lt;class 'pandas.core.frame.DataFrame'&gt;
+Index: 210 entries, 38 to 9923
+Data columns (total 3 columns):
+ #   Column                                                     Non-Null Count  Dtype  
+---  ------                                                     --------------  -----  
+ 0   Country                                                    210 non-null    object 
+ 1   Year                                                       210 non-null    int64  
+ 2   Gini coefficient (before tax) (World Inequality Database)  80 non-null     float64
+dtypes: float64(1), int64(1), object(1)
+memory usage: 6.6+ KB
+None</code></pre>
+</div>
+<div class="cell-output cell-output-display">
+<p><img src="index_files/figure-html/cell-2-output-2.png" width="660" height="449"></p>
+</div>
+</div>
+</section>
+<section id="step-2-evaluate-scatterplot-findings" class="level2">
+<h2 class="anchored" data-anchor-id="step-2-evaluate-scatterplot-findings">Step 2: Evaluate scatterplot findings</h2>
+<p>Looking at this scatterplot, 2 things are immediately obvious: the first is that almost all the points are clustered towards the bottom of the Y axis, but are clustered nonetheless, and the second is that there is one visually obvious outlier and one point that could be an outlier but requires further investigation.</p>
+</section>
+<section id="step-3-k-means-clustering-to-determine-outliers" class="level2">
+<h2 class="anchored" data-anchor-id="step-3-k-means-clustering-to-determine-outliers">Step 3: K-means clustering to determine outliers</h2>
+<p>In order to decide which of these points are truly outliers, I will use a K-means cluster with only 2 clusters, and the outcome will show the majority of the dataset in one cluster and the outliers in the other cluster.</p>
+<div class="cell" data-execution_count="2">
+<details>
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb3"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="co"># k-means clusterer</span></span>
+<span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a>ineq_emiss_np <span class="op">=</span> np.array(inequality_emissions_df[[<span class="st">'Gini coefficient (before tax) (World Inequality Database)'</span>, <span class="st">'2018'</span>]])</span>
+<span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-4"><a href="#cb3-4" aria-hidden="true" tabindex="-1"></a>k <span class="op">=</span> <span class="dv">2</span></span>
+<span id="cb3-5"><a href="#cb3-5" aria-hidden="true" tabindex="-1"></a>kmeans <span class="op">=</span> KMeans(n_clusters<span class="op">=</span>k, random_state<span class="op">=</span><span class="dv">42</span>)</span>
+<span id="cb3-6"><a href="#cb3-6" aria-hidden="true" tabindex="-1"></a>y_pred <span class="op">=</span> kmeans.fit_predict(ineq_emiss_np)</span>
+<span id="cb3-7"><a href="#cb3-7" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-8"><a href="#cb3-8" aria-hidden="true" tabindex="-1"></a><span class="co"># plot decision boundaries</span></span>
+<span id="cb3-9"><a href="#cb3-9" aria-hidden="true" tabindex="-1"></a>mins <span class="op">=</span> ineq_emiss_np.<span class="bu">min</span>(axis<span class="op">=</span><span class="dv">0</span>) <span class="op">-</span> <span class="fl">0.1</span></span>
+<span id="cb3-10"><a href="#cb3-10" aria-hidden="true" tabindex="-1"></a>maxs <span class="op">=</span> ineq_emiss_np.<span class="bu">max</span>(axis<span class="op">=</span><span class="dv">0</span>) <span class="op">+</span> <span class="fl">0.1</span></span>
+<span id="cb3-11"><a href="#cb3-11" aria-hidden="true" tabindex="-1"></a>xx, yy <span class="op">=</span> np.meshgrid(np.linspace(mins[<span class="dv">0</span>], maxs[<span class="dv">0</span>], <span class="dv">1000</span>),</span>
+<span id="cb3-12"><a href="#cb3-12" aria-hidden="true" tabindex="-1"></a>                      np.linspace(mins[<span class="dv">1</span>], maxs[<span class="dv">1</span>], <span class="dv">1000</span>))</span>
+<span id="cb3-13"><a href="#cb3-13" aria-hidden="true" tabindex="-1"></a>Z <span class="op">=</span> kmeans.predict(np.c_[xx.ravel(), yy.ravel()])</span>
+<span id="cb3-14"><a href="#cb3-14" aria-hidden="true" tabindex="-1"></a>Z <span class="op">=</span> Z.reshape(xx.shape)</span>
+<span id="cb3-15"><a href="#cb3-15" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-16"><a href="#cb3-16" aria-hidden="true" tabindex="-1"></a>plt.contourf(Z, extent<span class="op">=</span>(mins[<span class="dv">0</span>], maxs[<span class="dv">0</span>], mins[<span class="dv">1</span>], maxs[<span class="dv">1</span>]),</span>
+<span id="cb3-17"><a href="#cb3-17" aria-hidden="true" tabindex="-1"></a>            cmap<span class="op">=</span><span class="st">'Set3'</span>)</span>
+<span id="cb3-18"><a href="#cb3-18" aria-hidden="true" tabindex="-1"></a>plt.contour(Z, extent<span class="op">=</span>(mins[<span class="dv">0</span>], maxs[<span class="dv">0</span>], mins[<span class="dv">1</span>], maxs[<span class="dv">1</span>]),</span>
+<span id="cb3-19"><a href="#cb3-19" aria-hidden="true" tabindex="-1"></a>            linewidths<span class="op">=</span><span class="dv">1</span>, colors<span class="op">=</span><span class="st">'k'</span>)</span>
+<span id="cb3-20"><a href="#cb3-20" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-21"><a href="#cb3-21" aria-hidden="true" tabindex="-1"></a><span class="co"># plot data</span></span>
+<span id="cb3-22"><a href="#cb3-22" aria-hidden="true" tabindex="-1"></a>sns.scatterplot(data<span class="op">=</span>inequality_emissions_df, x<span class="op">=</span><span class="st">'Gini coefficient (before tax) (World Inequality Database)'</span>, y<span class="op">=</span><span class="st">'2018'</span>, s <span class="op">=</span> <span class="dv">100</span>)</span>
+<span id="cb3-23"><a href="#cb3-23" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-24"><a href="#cb3-24" aria-hidden="true" tabindex="-1"></a>plt.xlabel(<span class="st">'Inequality index (Gini Coefficient, before tax)'</span>)</span>
+<span id="cb3-25"><a href="#cb3-25" aria-hidden="true" tabindex="-1"></a>plt.ylabel(<span class="st">'CO2 Emissions in MtCO₂e'</span>)</span>
+<span id="cb3-26"><a href="#cb3-26" aria-hidden="true" tabindex="-1"></a>plt.title(<span class="st">'Correlation between CO2 Emissions and Inequality metric by Country in 2018'</span>)</span>
+<span id="cb3-27"><a href="#cb3-27" aria-hidden="true" tabindex="-1"></a>plt.show()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+<div class="cell-output cell-output-stderr">
+<pre><code>C:\Users\Erica\AppData\Local\Programs\Python\Python312\Lib\site-packages\sklearn\cluster\_kmeans.py:1416: FutureWarning: The default value of `n_init` will change from 10 to 'auto' in 1.4. Set the value of `n_init` explicitly to suppress the warning
+  super()._check_params_vs_input(X, default_n_init=10)</code></pre>
+</div>
+<div class="cell-output cell-output-display">
+<p><img src="index_files/figure-html/cell-3-output-2.png" width="660" height="449"></p>
+</div>
+</div>
+<p>Based on this graph, the yellow cluster at the top holds the single outlier for the dataset, while the bottom turquoise cluster holds the valid data for the dataset, including the two points we weren’t totally sure were going to be part of the valid dataset. This goes to show that a machine learning algorithm is a great way to determine what points are outliers, especially when it is dubious upon visual inspection. If we want to be a little bit more discerning with the outlier detection, we could try for 3 clusters.</p>
+<div class="cell" data-execution_count="3">
+<details>
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb5"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a><span class="co"># k-means clusterer</span></span>
+<span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a>ineq_emiss_np <span class="op">=</span> np.array(inequality_emissions_df[[<span class="st">'Gini coefficient (before tax) (World Inequality Database)'</span>, <span class="st">'2018'</span>]])</span>
+<span id="cb5-3"><a href="#cb5-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-4"><a href="#cb5-4" aria-hidden="true" tabindex="-1"></a>k <span class="op">=</span> <span class="dv">3</span></span>
+<span id="cb5-5"><a href="#cb5-5" aria-hidden="true" tabindex="-1"></a>kmeans <span class="op">=</span> KMeans(n_clusters<span class="op">=</span>k, random_state<span class="op">=</span><span class="dv">42</span>)</span>
+<span id="cb5-6"><a href="#cb5-6" aria-hidden="true" tabindex="-1"></a>y_pred <span class="op">=</span> kmeans.fit_predict(ineq_emiss_np)</span>
+<span id="cb5-7"><a href="#cb5-7" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-8"><a href="#cb5-8" aria-hidden="true" tabindex="-1"></a><span class="co"># plot decision boundaries</span></span>
+<span id="cb5-9"><a href="#cb5-9" aria-hidden="true" tabindex="-1"></a>mins <span class="op">=</span> ineq_emiss_np.<span class="bu">min</span>(axis<span class="op">=</span><span class="dv">0</span>) <span class="op">-</span> <span class="fl">0.1</span></span>
+<span id="cb5-10"><a href="#cb5-10" aria-hidden="true" tabindex="-1"></a>maxs <span class="op">=</span> ineq_emiss_np.<span class="bu">max</span>(axis<span class="op">=</span><span class="dv">0</span>) <span class="op">+</span> <span class="fl">0.1</span></span>
+<span id="cb5-11"><a href="#cb5-11" aria-hidden="true" tabindex="-1"></a>xx, yy <span class="op">=</span> np.meshgrid(np.linspace(mins[<span class="dv">0</span>], maxs[<span class="dv">0</span>], <span class="dv">1000</span>),</span>
+<span id="cb5-12"><a href="#cb5-12" aria-hidden="true" tabindex="-1"></a>                      np.linspace(mins[<span class="dv">1</span>], maxs[<span class="dv">1</span>], <span class="dv">1000</span>))</span>
+<span id="cb5-13"><a href="#cb5-13" aria-hidden="true" tabindex="-1"></a>Z <span class="op">=</span> kmeans.predict(np.c_[xx.ravel(), yy.ravel()])</span>
+<span id="cb5-14"><a href="#cb5-14" aria-hidden="true" tabindex="-1"></a>Z <span class="op">=</span> Z.reshape(xx.shape)</span>
+<span id="cb5-15"><a href="#cb5-15" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-16"><a href="#cb5-16" aria-hidden="true" tabindex="-1"></a>plt.contourf(Z, extent<span class="op">=</span>(mins[<span class="dv">0</span>], maxs[<span class="dv">0</span>], mins[<span class="dv">1</span>], maxs[<span class="dv">1</span>]),</span>
+<span id="cb5-17"><a href="#cb5-17" aria-hidden="true" tabindex="-1"></a>            cmap<span class="op">=</span><span class="st">'Set3'</span>)</span>
+<span id="cb5-18"><a href="#cb5-18" aria-hidden="true" tabindex="-1"></a>plt.contour(Z, extent<span class="op">=</span>(mins[<span class="dv">0</span>], maxs[<span class="dv">0</span>], mins[<span class="dv">1</span>], maxs[<span class="dv">1</span>]),</span>
+<span id="cb5-19"><a href="#cb5-19" aria-hidden="true" tabindex="-1"></a>            linewidths<span class="op">=</span><span class="dv">1</span>, colors<span class="op">=</span><span class="st">'k'</span>)</span>
+<span id="cb5-20"><a href="#cb5-20" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-21"><a href="#cb5-21" aria-hidden="true" tabindex="-1"></a><span class="co"># plot data</span></span>
+<span id="cb5-22"><a href="#cb5-22" aria-hidden="true" tabindex="-1"></a>sns.scatterplot(data<span class="op">=</span>inequality_emissions_df, x<span class="op">=</span><span class="st">'Gini coefficient (before tax) (World Inequality Database)'</span>, y<span class="op">=</span><span class="st">'2018'</span>, s <span class="op">=</span> <span class="dv">100</span>)</span>
+<span id="cb5-23"><a href="#cb5-23" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-24"><a href="#cb5-24" aria-hidden="true" tabindex="-1"></a>plt.xlabel(<span class="st">'Inequality index (Gini Coefficient, before tax)'</span>)</span>
+<span id="cb5-25"><a href="#cb5-25" aria-hidden="true" tabindex="-1"></a>plt.ylabel(<span class="st">'CO2 Emissions in MtCO₂e'</span>)</span>
+<span id="cb5-26"><a href="#cb5-26" aria-hidden="true" tabindex="-1"></a>plt.title(<span class="st">'Correlation between CO2 Emissions and Inequality metric by Country in 2018'</span>)</span>
+<span id="cb5-27"><a href="#cb5-27" aria-hidden="true" tabindex="-1"></a>plt.show()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+<div class="cell-output cell-output-stderr">
+<pre><code>C:\Users\Erica\AppData\Local\Programs\Python\Python312\Lib\site-packages\sklearn\cluster\_kmeans.py:1416: FutureWarning: The default value of `n_init` will change from 10 to 'auto' in 1.4. Set the value of `n_init` explicitly to suppress the warning
+  super()._check_params_vs_input(X, default_n_init=10)</code></pre>
+</div>
+<div class="cell-output cell-output-display">
+<p><img src="index_files/figure-html/cell-4-output-2.png" width="660" height="449"></p>
+</div>
+</div>
+<p>Here we can see that the outlier from the two cluster graph is still in its own cluster, but the point second-furthest away from the majority of the group is now in its own cluster, and the point third-furthest away seems to be straddling the line between possible outlier and valid data point. The cluster containing the majority of the points is the one containing the valid data.</p>
+
+
+</section>
+</section>
+
+</main> <!-- /main -->
+<script id="quarto-html-after-body" type="application/javascript">
+window.document.addEventListener("DOMContentLoaded", function (event) {
+  const toggleBodyColorMode = (bsSheetEl) => {
+    const mode = bsSheetEl.getAttribute("data-mode");
+    const bodyEl = window.document.querySelector("body");
+    if (mode === "dark") {
+      bodyEl.classList.add("quarto-dark");
+      bodyEl.classList.remove("quarto-light");
+    } else {
+      bodyEl.classList.add("quarto-light");
+      bodyEl.classList.remove("quarto-dark");
+    }
+  }
+  const toggleBodyColorPrimary = () => {
+    const bsSheetEl = window.document.querySelector("link#quarto-bootstrap");
+    if (bsSheetEl) {
+      toggleBodyColorMode(bsSheetEl);
+    }
+  }
+  toggleBodyColorPrimary();  
+  const icon = "";
+  const anchorJS = new window.AnchorJS();
+  anchorJS.options = {
+    placement: 'right',
+    icon: icon
+  };
+  anchorJS.add('.anchored');
+  const isCodeAnnotation = (el) => {
+    for (const clz of el.classList) {
+      if (clz.startsWith('code-annotation-')) {                     
+        return true;
+      }
+    }
+    return false;
+  }
+  const clipboard = new window.ClipboardJS('.code-copy-button', {
+    text: function(trigger) {
+      const codeEl = trigger.previousElementSibling.cloneNode(true);
+      for (const childEl of codeEl.children) {
+        if (isCodeAnnotation(childEl)) {
+          childEl.remove();
+        }
+      }
+      return codeEl.innerText;
+    }
+  });
+  clipboard.on('success', function(e) {
+    // button target
+    const button = e.trigger;
+    // don't keep focus
+    button.blur();
+    // flash "checked"
+    button.classList.add('code-copy-button-checked');
+    var currentTitle = button.getAttribute("title");
+    button.setAttribute("title", "Copied!");
+    let tooltip;
+    if (window.bootstrap) {
+      button.setAttribute("data-bs-toggle", "tooltip");
+      button.setAttribute("data-bs-placement", "left");
+      button.setAttribute("data-bs-title", "Copied!");
+      tooltip = new bootstrap.Tooltip(button, 
+        { trigger: "manual", 
+          customClass: "code-copy-button-tooltip",
+          offset: [0, -8]});
+      tooltip.show();    
+    }
+    setTimeout(function() {
+      if (tooltip) {
+        tooltip.hide();
+        button.removeAttribute("data-bs-title");
+        button.removeAttribute("data-bs-toggle");
+        button.removeAttribute("data-bs-placement");
+      }
+      button.setAttribute("title", currentTitle);
+      button.classList.remove('code-copy-button-checked');
+    }, 1000);
+    // clear code selection
+    e.clearSelection();
+  });
+  function tippyHover(el, contentFn) {
+    const config = {
+      allowHTML: true,
+      content: contentFn,
+      maxWidth: 500,
+      delay: 100,
+      arrow: false,
+      appendTo: function(el) {
+          return el.parentElement;
+      },
+      interactive: true,
+      interactiveBorder: 10,
+      theme: 'quarto',
+      placement: 'bottom-start'
+    };
+    window.tippy(el, config); 
+  }
+  const noterefs = window.document.querySelectorAll('a[role="doc-noteref"]');
+  for (var i=0; i<noterefs.length; i++) {
+    const ref = noterefs[i];
+    tippyHover(ref, function() {
+      // use id or data attribute instead here
+      let href = ref.getAttribute('data-footnote-href') || ref.getAttribute('href');
+      try { href = new URL(href).hash; } catch {}
+      const id = href.replace(/^#\/?/, "");
+      const note = window.document.getElementById(id);
+      return note.innerHTML;
+    });
+  }
+      let selectedAnnoteEl;
+      const selectorForAnnotation = ( cell, annotation) => {
+        let cellAttr = 'data-code-cell="' + cell + '"';
+        let lineAttr = 'data-code-annotation="' +  annotation + '"';
+        const selector = 'span[' + cellAttr + '][' + lineAttr + ']';
+        return selector;
+      }
+      const selectCodeLines = (annoteEl) => {
+        const doc = window.document;
+        const targetCell = annoteEl.getAttribute("data-target-cell");
+        const targetAnnotation = annoteEl.getAttribute("data-target-annotation");
+        const annoteSpan = window.document.querySelector(selectorForAnnotation(targetCell, targetAnnotation));
+        const lines = annoteSpan.getAttribute("data-code-lines").split(",");
+        const lineIds = lines.map((line) => {
+          return targetCell + "-" + line;
+        })
+        let top = null;
+        let height = null;
+        let parent = null;
+        if (lineIds.length > 0) {
+            //compute the position of the single el (top and bottom and make a div)
+            const el = window.document.getElementById(lineIds[0]);
+            top = el.offsetTop;
+            height = el.offsetHeight;
+            parent = el.parentElement.parentElement;
+          if (lineIds.length > 1) {
+            const lastEl = window.document.getElementById(lineIds[lineIds.length - 1]);
+            const bottom = lastEl.offsetTop + lastEl.offsetHeight;
+            height = bottom - top;
+          }
+          if (top !== null && height !== null && parent !== null) {
+            // cook up a div (if necessary) and position it 
+            let div = window.document.getElementById("code-annotation-line-highlight");
+            if (div === null) {
+              div = window.document.createElement("div");
+              div.setAttribute("id", "code-annotation-line-highlight");
+              div.style.position = 'absolute';
+              parent.appendChild(div);
+            }
+            div.style.top = top - 2 + "px";
+            div.style.height = height + 4 + "px";
+            let gutterDiv = window.document.getElementById("code-annotation-line-highlight-gutter");
+            if (gutterDiv === null) {
+              gutterDiv = window.document.createElement("div");
+              gutterDiv.setAttribute("id", "code-annotation-line-highlight-gutter");
+              gutterDiv.style.position = 'absolute';
+              const codeCell = window.document.getElementById(targetCell);
+              const gutter = codeCell.querySelector('.code-annotation-gutter');
+              gutter.appendChild(gutterDiv);
+            }
+            gutterDiv.style.top = top - 2 + "px";
+            gutterDiv.style.height = height + 4 + "px";
+          }
+          selectedAnnoteEl = annoteEl;
+        }
+      };
+      const unselectCodeLines = () => {
+        const elementsIds = ["code-annotation-line-highlight", "code-annotation-line-highlight-gutter"];
+        elementsIds.forEach((elId) => {
+          const div = window.document.getElementById(elId);
+          if (div) {
+            div.remove();
+          }
+        });
+        selectedAnnoteEl = undefined;
+      };
+      // Attach click handler to the DT
+      const annoteDls = window.document.querySelectorAll('dt[data-target-cell]');
+      for (const annoteDlNode of annoteDls) {
+        annoteDlNode.addEventListener('click', (event) => {
+          const clickedEl = event.target;
+          if (clickedEl !== selectedAnnoteEl) {
+            unselectCodeLines();
+            const activeEl = window.document.querySelector('dt[data-target-cell].code-annotation-active');
+            if (activeEl) {
+              activeEl.classList.remove('code-annotation-active');
+            }
+            selectCodeLines(clickedEl);
+            clickedEl.classList.add('code-annotation-active');
+          } else {
+            // Unselect the line
+            unselectCodeLines();
+            clickedEl.classList.remove('code-annotation-active');
+          }
+        });
+      }
+  const findCites = (el) => {
+    const parentEl = el.parentElement;
+    if (parentEl) {
+      const cites = parentEl.dataset.cites;
+      if (cites) {
+        return {
+          el,
+          cites: cites.split(' ')
+        };
+      } else {
+        return findCites(el.parentElement)
+      }
+    } else {
+      return undefined;
+    }
+  };
+  var bibliorefs = window.document.querySelectorAll('a[role="doc-biblioref"]');
+  for (var i=0; i<bibliorefs.length; i++) {
+    const ref = bibliorefs[i];
+    const citeInfo = findCites(ref);
+    if (citeInfo) {
+      tippyHover(citeInfo.el, function() {
+        var popup = window.document.createElement('div');
+        citeInfo.cites.forEach(function(cite) {
+          var citeDiv = window.document.createElement('div');
+          citeDiv.classList.add('hanging-indent');
+          citeDiv.classList.add('csl-entry');
+          var biblioDiv = window.document.getElementById('ref-' + cite);
+          if (biblioDiv) {
+            citeDiv.innerHTML = biblioDiv.innerHTML;
+          }
+          popup.appendChild(citeDiv);
+        });
+        return popup.innerHTML;
+      });
+    }
+  }
+});
+</script>
+</div> <!-- /content -->
+
+
+
+</body></html>
