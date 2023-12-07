@@ -7,7 +7,8 @@ jupyter: python3
 editor:
   render-on-save: true
 ---
-# Anomaly/Outlier Detection on the correlation between CO2 Emissions and Economic Inequality metric by country
+# Anomaly/Outlier Detection
+## On the correlation between CO2 Emissions and Economic Inequality metric by country
 As someone who majored in Environmental Informatics for my undergrad at Virginia Tech, exploring climate data and its relationship to non-climate datasets is something that I am familiar with and very passionate about. I wanted to make sure I had a set of data to use for a study on anomaly and outlier detection that would show a strong correlation between the two variables, but maybe not one that would come straight to mind for the average person. I had a hunch that the Inequality index for a country and the CO2 emissions for a country might be correlated, so I found a C02 emissions dataset from <https://www.kaggle.com/datasets/ankanhore545/carbon-dioxide-emissions-of-the-world> and an Economic Inequality dataset from <https://ourworldindata.org/economic-inequality>.
 
 ## What are these variables?
@@ -22,12 +23,8 @@ import matplotlib.pyplot as plt
 import numpy as np
 import pandas as pd
 import seaborn as sns
-from sklearn.linear_model import LinearRegression
-from sklearn.model_selection import train_test_split
 from sklearn.impute import SimpleImputer
-from sklearn.metrics import r2_score
-from sklearn.preprocessing import StandardScaler
-
+from sklearn.cluster import KMeans
 
 emissions_csv = 'https://raw.githubusercontent.com/erica16/ml1_blogs/main/data/historical_emissions.csv'
 inequality_csv ='https://raw.githubusercontent.com/erica16/ml1_blogs/main/data/inequality.csv'
