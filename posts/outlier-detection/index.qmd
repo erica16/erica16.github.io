@@ -1,5 +1,5 @@
 ---
-title: "Quarto Basics"
+title: "Outlier Detection"
 format:
   html:
     code-fold: true
