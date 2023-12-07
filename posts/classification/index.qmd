@@ -7,34 +7,54 @@ jupyter: python3
 editor:
   render-on-save: true
 ---
+# Random Forest Classifier
+In college we are told that if we spend a lot of time studying, make sure to listen well in class, make sure to GO to class, and take good notes we will succeed. But does this advice hold up to scrutiny? We are about to find out. Using a dataset that has a wide range of metrics on undergraduate college students, I will use a random forest classifier to determine what features are most important to a student's grade.
+
+datset: https://www.kaggle.com/datasets/jacksondivakarr/student-classification-dataset/data
+
+## Step 1: Import libraries and dataset
 
 ```{python}
 import matplotlib.pyplot as plt
 import numpy as np
 import pandas as pd
 import seaborn as sns
-from sklearn.preprocessing import OneHotEncoder, StandardScaler, LabelEncoder, OrdinalEncoder
-from sklearn.compose import ColumnTransformer, make_column_selector, make_column_transformer
+from sklearn.preprocessing import LabelEncoder
+from sklearn.compose import make_column_selector
 from sklearn.ensemble import RandomForestClassifier
 from sklearn.metrics import accuracy_score
 
 # get data
 student_df = pd.read_csv('https://raw.githubusercontent.com/erica16/ml1_blogs/main/data/student.csv')
 
+print(student_df.head())
+
+```
+
+## Step 2: Clean data
+Since a lot of this data is categorical, we will need to use an encoder to make it numerical so the random forest classifier can handle it. For this task I am using a label encoder because the majority of the categorical data is not ordered and has a small set of repeated values.
+```{python}
 #dropping ID because it will not be used to train or be predicted
 student_df_clean = student_df.drop(student_df.columns[:2], axis='columns')
 cat_selector = make_column_selector(dtype_include=object)
 cat_columns = cat_selector(student_df_clean)
-print(cat_columns)
-label_encoder = LabelEncoder()
 
+# use encoder for categorical data
 student_df_enc = student_df_clean.select_dtypes(include=['number'])
+label_encoder = LabelEncoder()
 
 # Iterate through columns and encode categorical columns
 for col in student_df_clean.columns:
     if student_df_clean[col].dtype == 'object':  # Check if column has categorical data
         student_df_enc[col] = label_encoder.fit_transform(student_df_clean[col])
 
+print(student_df_enc.head())
+```
+
+## Step 3: Train and run random forest classifier
+Now that the data is clean we can split it up into training and testing data using the scikit learn train_test_split function. Since we want to know what factors impact grade, the independent variables (X) will be all the factors besides grade, and the dependent variable (y) will be grade.
+
+```{python}
 train_set_X, test_set_X, train_set_y, test_set_y = train_test_split(student_df_enc.drop('Grade', axis='columns'), student_df_enc['Grade'], test_size=0.2, random_state=42)
 
 rnd_clf = RandomForestClassifier(n_estimators=500, max_leaf_nodes=16,
@@ -47,9 +67,15 @@ y_pred_rf = rnd_clf.predict(test_set_X)
 
 feature_importances = pd.Series(rnd_clf.feature_importances_, train_set_X.columns).sort_values()
 
-plt.barh(feature_importances.index, feature_importances.values)
+plt.barh(feature_importances.index, feature_importances.values * 100)
+plt.xlabel('Percent Impact on Grade')
+plt.ylabel('Student Factor')
+plt.title('Impact on Student Activities on Grade')
 plt.show()
 
-print(accuracy_score(test_set_y, y_pred_rf))
+print(f"Accuracy score: {accuracy_score(test_set_y, y_pred_rf) * 100}%")
 ```
 
+## Investigate results
+Upon viewing the top factors that impact a student's grade, I am compelled to remind the reader that correlation does not mean causation. Surely there are other forces at play that make a student's age the number one most impactful factor on their grade, and whether they do or don't have a scholarship also probably isn't the cause of good grades. It is also important to keep an eye on the scale of this chart - the highest factor is only about 14% impactful, and the highest factor that a student can actually control is about 9% impactful. It doesn't look like any one thing will have a huge impact on grades, which makes sense. If a student starts going to class more, for example, but doesn't pay attention or take notes, that most likely won't cause a major impact in their grade (unless their grade is 100% attendance based, but that is also unlikely).
+The other thing to point out is the accuracy score - this random forest classifier is only 20% accurate. That means there is a lot of room for improvement! Perhaps more data, or better quality data, or more tweaking the label encoder could increase this number.

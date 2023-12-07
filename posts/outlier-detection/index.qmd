@@ -21,10 +21,12 @@ The first thing to do after downloading the datasets and hosting them on my git 
 import matplotlib.pyplot as plt
 import numpy as np
 import pandas as pd
+import seaborn as sns
 from sklearn.linear_model import LinearRegression
 from sklearn.model_selection import train_test_split
 from sklearn.impute import SimpleImputer
 from sklearn.metrics import r2_score
+from sklearn.preprocessing import StandardScaler
 
 
 emissions_csv = 'https://raw.githubusercontent.com/erica16/ml1_blogs/main/data/historical_emissions.csv'
@@ -37,10 +39,11 @@ inequality_df = pd.read_csv(inequality_csv)
 #clean data
 inequality_filtered = inequality_df.filter(['Country', 'Year', 'Gini coefficient (before tax) (World Inequality Database)'])
 
+print(emissions_df.info())
 
 #filter to 2018
 inequality_2018 = inequality_filtered.loc[inequality_filtered['Year'] == 2018]
-
+print(inequality_2018.info())
 
 #merge dfs on country
 inequality_emissions_df = inequality_2018.merge(emissions_df, on='Country')
@@ -52,7 +55,7 @@ inequality_emissions_df[in_em_nums.columns] = in_em_imputed
 
 
 # Visualize the data
-inequality_emissions_df.plot.scatter('Gini coefficient (before tax) (World Inequality Database)' ,'2018')
+sns.scatterplot(data=inequality_emissions_df, x='Gini coefficient (before tax) (World Inequality Database)' ,y='2018')
 plt.xlabel('Inequality index (Gini Coefficient, before tax)')
 plt.ylabel('CO2 Emissions in MtCO₂e')
 plt.title('Correlation between CO2 Emissions and Inequality metric by Country in 2018')
@@ -60,31 +63,71 @@ plt.show()
 ```
 
 ## Step 2: Evaluate scatterplot findings
-Looking at this scatterplot, 2 things are immediately obvious: the first is that almost all the points are clustered towards the bottom of the Y axis, but are clustered nonetheless, and the second is that there is one visually obvious outlier and one point that could be an outlier but requires further investigation.
+Looking at this scatterplot, 2 things are immediately obvious: the first is that almost all the points are clustered towards the bottom of the Y axis, but are clustered nonetheless, and the second is that there is one visually obvious outlier and one point that could be an outlier but requires further investigation. 
+
+## Step 3: K-means clustering to determine outliers
+In order to decide which of these points are truly outliers, I will use a K-means cluster with only 2 clusters, and the outcome will show the majority of the dataset in one cluster and the outliers in the other cluster.
+
 ```{python}
-X = inequality_emissions_df['Gini coefficient (before tax) (World Inequality Database)']
-y = inequality_emissions_df['2018']
+# k-means clusterer
+ineq_emiss_np = np.array(inequality_emissions_df[['Gini coefficient (before tax) (World Inequality Database)', '2018']])
 
-print(inequality_emissions_df.head())
+k = 2
+kmeans = KMeans(n_clusters=k, random_state=42)
+y_pred = kmeans.fit_predict(ineq_emiss_np)
 
-# first degree polynomial with outliers
-z = np.polyfit(x=X, y=y, deg=1)
-p = np.poly1d(z)
+# plot decision boundaries
+mins = ineq_emiss_np.min(axis=0) - 0.1
+maxs = ineq_emiss_np.max(axis=0) + 0.1
+xx, yy = np.meshgrid(np.linspace(mins[0], maxs[0], 1000),
+                      np.linspace(mins[1], maxs[1], 1000))
+Z = kmeans.predict(np.c_[xx.ravel(), yy.ravel()])
+Z = Z.reshape(xx.shape)
 
-# Visualize the data
+plt.contourf(Z, extent=(mins[0], maxs[0], mins[1], maxs[1]),
+            cmap='Set3')
+plt.contour(Z, extent=(mins[0], maxs[0], mins[1], maxs[1]),
+            linewidths=1, colors='k')
 
-plt.scatter(X, y)
-plt.plot(X, p(X))
+# plot data
+sns.scatterplot(data=inequality_emissions_df, x='Gini coefficient (before tax) (World Inequality Database)', y='2018', s = 100)
+
 plt.xlabel('Inequality index (Gini Coefficient, before tax)')
 plt.ylabel('CO2 Emissions in MtCO₂e')
 plt.title('Correlation between CO2 Emissions and Inequality metric by Country in 2018')
 plt.show()
-
-print("r-squared = {:.3f}".format(r2_score(X, y)))
 ```
 
+Based on this graph, the yellow cluster at the top holds the single outlier for the dataset, while the bottom turquoise cluster holds the valid data for the dataset, including the two points we weren't totally sure were going to be part of the valid dataset. This goes to show that a machine learning algorithm is a great way to determine what points are outliers, especially when it is dubious upon visual inspection. If we want to be a little bit more discerning with the outlier detection, we could try for 3 clusters.
 
 ```{python}
-# split df into training set and testing set
-train_set, test_set = train_test_split(inequality_emissions_df, test_size=0.2, random_state=42)
+# k-means clusterer
+ineq_emiss_np = np.array(inequality_emissions_df[['Gini coefficient (before tax) (World Inequality Database)', '2018']])
+
+k = 3
+kmeans = KMeans(n_clusters=k, random_state=42)
+y_pred = kmeans.fit_predict(ineq_emiss_np)
+
+# plot decision boundaries
+mins = ineq_emiss_np.min(axis=0) - 0.1
+maxs = ineq_emiss_np.max(axis=0) + 0.1
+xx, yy = np.meshgrid(np.linspace(mins[0], maxs[0], 1000),
+                      np.linspace(mins[1], maxs[1], 1000))
+Z = kmeans.predict(np.c_[xx.ravel(), yy.ravel()])
+Z = Z.reshape(xx.shape)
+
+plt.contourf(Z, extent=(mins[0], maxs[0], mins[1], maxs[1]),
+            cmap='Set3')
+plt.contour(Z, extent=(mins[0], maxs[0], mins[1], maxs[1]),
+            linewidths=1, colors='k')
+
+# plot data
+sns.scatterplot(data=inequality_emissions_df, x='Gini coefficient (before tax) (World Inequality Database)', y='2018', s = 100)
+
+plt.xlabel('Inequality index (Gini Coefficient, before tax)')
+plt.ylabel('CO2 Emissions in MtCO₂e')
+plt.title('Correlation between CO2 Emissions and Inequality metric by Country in 2018')
+plt.show()
 ```
+
+Here we can see that the outlier from the two cluster graph is still in its own cluster, but the point second-furthest away from the majority of the group is now in its own cluster, and the point third-furthest away seems to be straddling the line between possible outlier and valid data point. The cluster containing the majority of the points is the one containing the valid data.

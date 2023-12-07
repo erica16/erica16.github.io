@@ -1,0 +1,58 @@
+---
+title: "Linear Regression"
+format:
+  html:
+    code-fold: true
+jupyter: python3
+editor:
+  render-on-save: true
+---
+# Linear Regression
+## What is linear regression?
+A Linear regression is a way of displaying a predictive relationship between an independent variable and a dependent variable. It allows data scientists to calculate a line of best fit through the points displayed on a scatterplot, which can then be used to describe the relationship of the independent and dependent variable, in addition to allowing for prediction of a dependent variable value given an independent variable value.
+
+## About the data
+I am going to examine the relationship between months of job experience and salary, with job experience being the independent variable and salary being the dependent variable. My hypothesis is that as months of job experience increase, salary will also increase. My data source: https://www.kaggle.com/datasets/saquib7hussain/experience-salary-dataset
+
+## Step 1: import libraries and read in dataset to a pandas dataframe
+```{python}
+import matplotlib.pyplot as plt
+import numpy as np
+import pandas as pd
+import seaborn as sns
+from sklearn.model_selection import train_test_split
+from sklearn.metrics import r2_score
+from sklearn.linear_model import LinearRegression
+
+exp_csv = pd.read_csv('https://raw.githubusercontent.com/erica16/ml1_blogs/main/data/Experience-Salary.csv')
+```
+
+## Step 2: Perform linear regression
+Since I want to study the effect of experience on salary, X (the independent variable) will be experience in months, and y (the dependent variable) will be salary in thousands of dollars. Because I'm doing a linear regression, the first thing I do after taking a look at the information about the data is split the data up into training and testing sets using the scikit learn train_test_split method. After that, I fit the linear regression to the training data then predict y using the test set of x values. From there the only thing left to do is visualize the data using a scatterplot to show the whole dataset and a line to show the linear regression using the test x and predicted y.
+```{python}
+# linear regression
+X = exp_csv['exp(in months)']
+y = exp_csv['salary(in thousands)']
+
+print(exp_csv.info())
+
+train_set_X, test_set_X, train_set_y, test_set_y= train_test_split(np.array(X).reshape(-1, 1), y, test_size=0.2, random_state=42)
+
+lin_reg = LinearRegression()
+lin_reg.fit(train_set_X, train_set_y)
+y_pred = lin_reg.predict(test_set_X)
+
+sns.scatterplot(x=X, y=y)
+plt.plot(test_set_X, y_pred, color='red')
+plt.title('Salary in thousands vs Job Experience in months')
+plt.show()
+```
+
+
+## Step 3: Check out the R-squared value
+That line looks pretty well fit! To find out how well fit, we can take a look at the R-squared value:
+```{python}
+print("r-squared = {:.3f}".format(r2_score(X, y)))
+```
+
+R-squared values range from 0 to 1, and generally in social science research a value between 0.50 and 0.99 is acceptable, according to [this link](https://mpra.ub.uni-muenchen.de/115769/1/MPRA_paper_115769.pdf). Therefore, this is a fairly good model! It could always be closer to 1, but that is for another blog.

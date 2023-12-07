@@ -7,7 +7,16 @@ jupyter: python3
 editor:
   render-on-save: true
 ---
+Bayes' rule, or Bayes' theorem or Bayes' law, describes the probability of an event occurring given prior knowledge of conditions that could be related to said event.
 
+I am interested in exploring the relationship between a country's happiness score and how much renewable energy the country uses. 
+Happiness scores have been measured for citizens of countries using the World Happiness Report, which is gathered from the Gallup World Poll. The happiness score is also known as the Cantril score because the main question asked to determine a citizens happiness is:
+“Please imagine a ladder, with steps numbered from 0 at the bottom to 10 at the top. The top of the ladder represents the best possible life for you and the bottom of the ladder represents the worst possible life for you. On which step of the ladder would you say you personally feel you stand at this time?”
+And the ladder in reference is also called the Cantril ladder.
+
+My data resources are https://ourworldindata.org/renewable-energy for renewable energy and https://ourworldindata.org/happiness-and-life-satisfaction for happiness. 
+
+First, import all libraries and pull data from github into pandas dataframes.
 
 ```{python}
 import matplotlib.pyplot as plt
@@ -16,10 +25,9 @@ import pandas as pd
 import seaborn as sns
 from sklearn.linear_model import LinearRegression
 from sklearn.model_selection import train_test_split
-from sklearn.impute import SimpleImputer
 from sklearn.metrics import r2_score
-from sklearn.cluster import KMeans
-
+from sklearn.naive_bayes import GaussianNB
+from sklearn.metrics import accuracy_score
 
 happy_csv = 'https://raw.githubusercontent.com/erica16/ml1_blogs/main/data/happiness-cantril-ladder.csv'
 renew_csv = 'https://raw.githubusercontent.com/erica16/ml1_blogs/main/data/renewable-share-energy.csv'
@@ -29,6 +37,12 @@ percent_renew_csv = 'https://raw.githubusercontent.com/erica16/ml1_blogs/main/da
 happy_df = pd.read_csv(happy_csv)
 renew_df = pd.read_csv(renew_csv)
 percent_renew_df = pd.read_csv(percent_renew_csv)
+
+```
+
+For this task, I have 3 datasets - one for the happiness metric, one for the percentage of country's energy that comes from renewable sources, and one for the breakdown of a country's renewable energy sources in TWh (terawatt hours).
+Since the amount of energy a country consumes varies per country, we need to have a way of being able to compare the renewable energy source breakdowns reliably between countries. For this, I made a function that takes all the renewable sources and turns each value into a percentage.
+```{python}
 
 # takes row in the renewable energy consumption breakdown datatable and turns each data column
 # into a percent value rounded to the nearest 100ths decimal place.
@@ -48,6 +62,11 @@ def calculate_percentages(row):
             (hydro/total) * 100
             ])
 
+```
+
+Now that we have a good way of comparing all the data on the same scale, we can get our dataframes ready to merge and then analyze. 
+First we can narrow down the dataframes to just the columns we need, and filter the data to just years 2011 and after because the happiness index dataset starts at 2011.
+```{python}
 # clean data
 percent_renew_df[['Other', 'Solar', 'Wind', 'Hydro']] = percent_renew_df.apply(calculate_percentages, axis=1)
 percent_renew_clean = percent_renew_df.filter(['Entity', 'Year', 'Other', 'Solar', 'Wind', 'Hydro'])
@@ -55,26 +74,64 @@ percent_renew_clean['Largest Renewable Source'] = percent_renew_clean[['Other', 
 happy_df_rename = happy_df.rename(columns={'Cantril ladder score':'Happiness Score'})
 renew_df_rename = renew_df.rename(columns={renew_df.columns[3]:'Percent Renewable Energy'})
 
-print(percent_renew_clean)
-
-# filter to after 2010
-happy_years = happy_df_rename.loc[happy_df_rename['Year'] > 2020]
-renew_years = renew_df_rename.loc[renew_df_rename['Year']> 2020]
-percent_renew_years = percent_renew_clean.loc[percent_renew_clean['Year'] > 2020]
+# filter to after 2010 because the happiness dataset starts at 2011
+happy_years = happy_df_rename.loc[happy_df_rename['Year'] > 2010]
+renew_years = renew_df_rename.loc[renew_df_rename['Year']> 2010]
+percent_renew_years = percent_renew_clean.loc[percent_renew_clean['Year'] > 2010]
 
 # merge dfs on country
 happy_renew_df = happy_years.merge(renew_years, on='Entity')
 
 all_df = happy_renew_df.merge(percent_renew_years, on='Entity')
 
-all_xy = all_df.filter(['Happiness Score', 'Percent Renewable Energy', 'Solar', 'Wind', 'Hydro', 'Other', 'Largest Renewable Source'])
+all_xy = all_df.filter(['Happiness Score', 'Percent Renewable Energy', 'Solar', 'Wind', 'Hydro', 'Other', 'Largest Renewable Source']).dropna()
+
+print(all_xy.info())
+sns.scatterplot(data=all_xy, x='Percent Renewable Energy', y='Happiness Score', s=12, hue='Largest Renewable Source')
+plt.title("Country Happiness Score vs Percent Renewable Energy")
+plt.show()
+```
+
+Here is our first look at the dataset. From the scatterplot, we can see that there is clearly not a tight relationship between the variables, but it does seem to be generally a positive trend.
+
+Now we can run some models on the data and try to see a relationship, starting with a linear regression. Before running the linear regression, my guess is what I stated in the previous paragraph - there will be a loose positive trend.
+```{python}
+X = all_xy['Percent Renewable Energy']
+y = all_xy['Happiness Score']
+
+# linear regression
+train_set_X, test_set_X, train_set_y, test_set_y= train_test_split(np.array(X).reshape(-1, 1), np.array(y), test_size=0.2, random_state=42)
+
+lin_reg = LinearRegression()
+lin_reg.fit(train_set_X, train_set_y)
+lin_reg.intercept_, lin_reg.coef_
+y_pred = lin_reg.predict(test_set_X)
 
 sns.scatterplot(data=all_xy, x='Percent Renewable Energy', y='Happiness Score', s=12, hue='Largest Renewable Source')
+plt.plot(test_set_X, y_pred, color='red')
+plt.title("Country Happiness Score vs Percent Renewable Energy")
 plt.show()
-
-
+print("r-squared = {:.3f}".format(r2_score(X, y)))
 ```
 
-```{python}
+Now that we can see the positive trendline, we know my guess was right. That r-squared value is pretty unfortunate though. A negative r-squared value means the model performs very poorly for this dataset, so it may be useful to check out a different type of model.
 
+Instead of doing a Linear Regression, I am doing a Gaussian Naive Bayes model. This is a model that assumes that the numerical attributes like Happiness Score are distributed normally, and assumes independence among the features in order to apply Bayes' theorem.
+
+Since it needs to compare a categorical variable with a continuous numerical variable, I am going to be using the Happiness Score to predict a country's Largest Renewable Resource.
+
+``` {python}
+X = all_xy['Happiness Score']
+y = all_xy['Largest Renewable Source']
+train_set_X, test_set_X, train_set_y, test_set_y= train_test_split(np.array(X).reshape(-1, 1), np.array(y), test_size=0.2, random_state=42)
+
+gnb = GaussianNB()
+print(train_set_X)
+print(train_set_y)
+gnb.fit(train_set_X, train_set_y)
+gnb_predict = gnb.predict(test_set_X)
+
+print(accuracy_score(test_set_y, gnb_predict))
 ```
+
+The Gaussian Naive Bayes model is 66% accurate! This means that 66 times out of 100, the model will correctly predict a country's largest renewable source given the country's happiness score.
